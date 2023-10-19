@@ -1,51 +1,57 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controller;
 
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Project;
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries.ProjectRepository;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Ticket;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries.ProjectRepositary;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.services.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RestController
-//@RequestMapping("/api")
+@RequestMapping("/project")
 public class ProjectController {
 
     @Autowired
-    ProjectRepository projectRepository;
+    ProjectRepositary projectRepositary;
 
-    @Operation(summary = "Get a Project by ProjectId", description = "Returns a Project as per the ProjectId")
-    @GetMapping("/project/{projectId}")
-    public ResponseEntity<Object> getProject(@PathVariable("projectId")Long projectId){
-        Optional<Project> optionalProject=projectRepository.findById(projectId);
-        if(optionalProject.isPresent())
-            return ResponseEntity.ok(projectRepository.findById(projectId));
-        else
-            return ResponseEntity.ok("No Project exist of id : "+projectId);
-    }
+    @Autowired
+    ProjectService projectService;
 
-    @Operation(summary = "Get all Projects", description = "return all projects")
-    @GetMapping("/project")
-    public ResponseEntity<List<Project>> getAllProject(){
-        return ResponseEntity.ok(projectRepository.findAll());
-    }
+//    @Operation(summary = "Get a Project by ProjectId", description = "Returns a Project as per the ProjectId")
+//    @GetMapping("/{projectId}")
+//    public ResponseEntity<Object> getProject(@PathVariable("projectId")Long projectId){
+//        return projectService.getProject(projectId);
+//    }
+
+
+//    @Operation(summary = "Get all Projects", description = "return all projects")
+//    @GetMapping
+//    public ResponseEntity<List<Project>> getAllProject(){
+//        return projectService.getAllProject();
+//    }
 
     @Operation(summary = "Create a project", description = "Returns the created project")
-    @PostMapping("/project")
+    @PostMapping
     public ResponseEntity<Project> createProject(Project project){
-        return ResponseEntity.ok(projectRepository.save(project));
+       return projectService.createProject(project);
     }
 
 
     @Operation(summary = "Delete a project by ProjectID", description = "Returns the deletion status")
-    @DeleteMapping("/project/{projectId}")
+    @DeleteMapping("/{projectId}")
     public ResponseEntity<String> deleteProject(@PathVariable("projectId")Long projectId){
-        return ResponseEntity.ok("Project is deleted of id : "+projectId);
+        return projectService.deleteProject(projectId);
+    }
+
+    @Operation(summary = "update a project by projectID", description = "Returns the updated project object status")
+    @PatchMapping("/{projectId}")
+    public ResponseEntity<Project> deleteProject(@PathVariable("projectId")Long projectId, @RequestBody Project project){
+        return projectService.updateProject(projectId,project);
     }
 
 
