@@ -40,7 +40,7 @@ public class RuleController {
     }
 
     @Operation(summary = "update rule", description = "Returns the updated rule")
-    @PutMapping("/rule/{ruleId}")
+    @PatchMapping("/rule/{ruleId}")
     public ResponseEntity<Rule> updateRule(@PathVariable("ruleId")Long ruleId){
         return ResponseEntity.ok(new Rule());
     }
