@@ -9,16 +9,26 @@ public class Rule {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
     @Column(columnDefinition = "boolean default false")
     private boolean isTimeBased;
+
+
     @Column(nullable = false)
     private String scope;
     @Column(nullable = false)
     private String identity;
+
     @Column(nullable = false ,name="trigger_field")
     private String trigger;
     @Column(nullable = false ,name = "trigger_condition")
     private String condition;
+
+
+    @Column(nullable = false)
+    private Boolean flag;
+
+
     @Column(nullable = false)
     private String action;
     @Column(nullable = false)
@@ -36,12 +46,14 @@ public class Rule {
     @Column(nullable = false)
     private boolean isDeleted;
 
-    public Rule(int id, String scope, String identity, String trigger, String condition, String action, String desription, String severity, String recepientDescription, String channel, LocalDateTime creationDate, boolean isEnabled, boolean isDeleted) {
+    public Rule(int id, boolean isTimeBased, String scope, String identity, String trigger, String condition, Boolean flag, String action, String desription, String severity, String recepientDescription, String channel, LocalDateTime creationDate, boolean isEnabled, boolean isDeleted) {
         this.id = id;
+        this.isTimeBased = isTimeBased;
         this.scope = scope;
         this.identity = identity;
         this.trigger = trigger;
         this.condition = condition;
+        this.flag = flag;
         this.action = action;
         this.desription = desription;
         this.severity = severity;
@@ -54,19 +66,15 @@ public class Rule {
 
     public Rule() {
     }
-
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
-
     public String getScope() {
         return scope;
     }
-
     public void setScope(String scope) {
         this.scope = scope;
     }
@@ -163,10 +171,12 @@ public class Rule {
     public String toString() {
         return "Rule{" +
                 "id=" + id +
+                ", isTimeBased=" + isTimeBased +
                 ", scope='" + scope + '\'' +
                 ", identity='" + identity + '\'' +
                 ", trigger='" + trigger + '\'' +
                 ", condition='" + condition + '\'' +
+                ", flag=" + flag +
                 ", action='" + action + '\'' +
                 ", desription='" + desription + '\'' +
                 ", severity='" + severity + '\'' +
