@@ -20,8 +20,9 @@ public class RuleController {
     }
 
     @Operation(summary = "Get list of rule by scope", description = "Returns list of rule by scope")
-    @GetMapping("/rule/{scope , identity , trigger , condition}")
-    public ResponseEntity<List<Rule>> getRuleByScope(@PathVariable("scope")String scope,@PathVariable("identity")String identity,@PathVariable("trigger")String trigger,@PathVariable("scope")String condition){
+    @GetMapping("/rule/{scope}/{identity}/{trigger}/{condition}/{flag}")
+
+    public ResponseEntity<List<Rule>> getRuleByScope(@PathVariable("scope")String scope,@PathVariable("identity")String identity,@PathVariable("trigger")String trigger,@PathVariable("scope")String condition,@PathVariable("flag") boolean flag){
 
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }

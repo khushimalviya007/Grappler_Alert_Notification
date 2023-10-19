@@ -13,10 +13,16 @@ public class Rule {
     private String scope;
     @Column(nullable = false)
     private String identity;
-    @Column(nullable = false)
+    @Column(name = "trigger_type", nullable = false)
     private String trigger;
-    @Column(nullable = false)
+    @Column(name = "condition_text", nullable = false)
     private String condition;
+
+    @Column(nullable = false)
+    private Boolean flag;
+
+
+
     @Column(nullable = false)
     private String action;
     @Column(nullable = false)
@@ -33,12 +39,13 @@ public class Rule {
     private boolean isEnabled;
     @Column(nullable = false)
     private boolean isDeleted;
-    public Rule(int id, String scope, String identity, String trigger, String condition, String action, String desription, String severity, String recepientDescription, String channel, LocalDateTime creationDate, boolean isEnabled, boolean isDeleted) {
+    public Rule(int id, String scope, String identity, String trigger, String condition,Boolean flag,String action, String desription, String severity, String recepientDescription, String channel, LocalDateTime creationDate, boolean isEnabled, boolean isDeleted) {
         this.id = id;
         this.scope = scope;
         this.identity = identity;
         this.trigger = trigger;
         this.condition = condition;
+        this.flag=flag;
         this.action = action;
         this.desription = desription;
         this.severity = severity;
@@ -65,6 +72,15 @@ public class Rule {
     public String getIdentity() {
         return identity;
     }
+
+    public Boolean getFlag() {
+        return flag;
+    }
+
+    public void setFlag(Boolean flag) {
+        this.flag = flag;
+    }
+
     public void setIdentity(String identity) {
         this.identity = identity;
     }
