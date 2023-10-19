@@ -29,7 +29,18 @@ public class Notification {
     @ManyToOne
     private Project project;
 
-    public Notification(Long id, String title, String description, String channels, LocalDateTime dateAndTime, boolean isRead, List<User> listOfUser, Template template, Ticket ticket, Project project) {
+    @ManyToOne
+    private Rule rule;
+
+    public Rule getRule() {
+        return rule;
+    }
+
+    public void setRule(Rule rule) {
+        this.rule = rule;
+    }
+
+    public Notification(Long id, String title, String description, String channels, LocalDateTime dateAndTime, boolean isRead, List<User> listOfUser, Template template, Ticket ticket, Project project, Rule rule) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -40,6 +51,7 @@ public class Notification {
         this.template = template;
         this.ticket = ticket;
         this.project = project;
+        this.rule = rule;
     }
 
     public Notification() {
@@ -138,6 +150,7 @@ public class Notification {
                 ", template=" + template +
                 ", ticket=" + ticket +
                 ", project=" + project +
+                ", rule=" + rule +
                 '}';
     }
 }

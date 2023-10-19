@@ -27,8 +27,10 @@ public class Alert {
     private Project project;
     @OneToOne
     private Template template;
+    @ManyToOne
+    private Rule rule;
 
-    public Alert(Long id, AlertType type, String description, String channels, LocalDateTime dateAndTime, String response, List<User> listOfUsers, Ticket ticket, Project project, Template template) {
+    public Alert(Long id, AlertType type, String description, String channels, LocalDateTime dateAndTime, String response, List<User> listOfUsers, Ticket ticket, Project project, Template template, Rule rule) {
         this.id = id;
         this.type = type;
         this.description = description;
@@ -39,6 +41,7 @@ public class Alert {
         this.ticket = ticket;
         this.project = project;
         this.template = template;
+        this.rule = rule;
     }
 
     public Alert() {
@@ -124,19 +127,5 @@ public class Alert {
         this.template = template;
     }
 
-    @Override
-    public String toString() {
-        return "Alert{" +
-                "id=" + id +
-                ", type=" + type +
-                ", description='" + description + '\'' +
-                ", channels='" + channels + '\'' +
-                ", dateAndTime=" + dateAndTime +
-                ", response='" + response + '\'' +
-                ", listOfUsers=" + listOfUsers +
-                ", ticket=" + ticket +
-                ", project=" + project +
-                ", template=" + template +
-                '}';
-    }
+
 }
