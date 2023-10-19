@@ -28,7 +28,7 @@ public class Notification {
     private Ticket ticket;
     @ManyToOne
     private Project project;
-
+    private EventType eventType;
     public Notification(Long id, String title, String description, String channels, LocalDateTime dateAndTime, boolean isRead, List<User> listOfUser, Template template, Ticket ticket, Project project) {
         this.id = id;
         this.title = title;
