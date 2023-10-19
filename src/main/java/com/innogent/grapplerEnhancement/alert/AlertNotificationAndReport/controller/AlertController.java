@@ -44,7 +44,7 @@ public class AlertController {
 
 
     @Operation(summary = "to Save Response of Alert", description = "Returns Saved Alert with Response")
-    @PutMapping("alert/{alertId}")
+    @PatchMapping("alert/{alertId}")
     public ResponseEntity<String> saveAlertResponse(@PathVariable("alertId")Long alertId, String response){
         return ResponseEntity.ok("alert response is saved");
     }

@@ -10,9 +10,8 @@ public class Rule {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column(columnDefinition = "boolean default false")
-    private boolean isTimeBased;
-
+    @Column
+    private Sources sources;
 
     @Column(nullable = false)
     private String scope;
@@ -23,11 +22,6 @@ public class Rule {
     private String trigger;
     @Column(nullable = false ,name = "trigger_condition")
     private String condition;
-
-
-    @Column(nullable = false)
-    private Boolean flag;
-
 
     @Column(nullable = false)
     private String action;
@@ -46,14 +40,13 @@ public class Rule {
     @Column(nullable = false)
     private boolean isDeleted;
 
-    public Rule(int id, boolean isTimeBased, String scope, String identity, String trigger, String condition, Boolean flag, String action, String desription, String severity, String recepientDescription, String channel, LocalDateTime creationDate, boolean isEnabled, boolean isDeleted) {
+    public Rule(int id,Sources sources, String scope, String identity, String trigger, String condition, Boolean flag, String action, String desription, String severity, String recepientDescription, String channel, LocalDateTime creationDate, boolean isEnabled, boolean isDeleted) {
         this.id = id;
-        this.isTimeBased = isTimeBased;
+        this.sources =sources ;
         this.scope = scope;
         this.identity = identity;
         this.trigger = trigger;
         this.condition = condition;
-        this.flag = flag;
         this.action = action;
         this.desription = desription;
         this.severity = severity;
@@ -167,16 +160,23 @@ public class Rule {
         isDeleted = deleted;
     }
 
+    public Sources getSources() {
+        return sources;
+    }
+
+    public void setSources(Sources sources) {
+        this.sources = sources;
+    }
+
     @Override
     public String toString() {
         return "Rule{" +
                 "id=" + id +
-                ", isTimeBased=" + isTimeBased +
+                ", sources=" + sources +
                 ", scope='" + scope + '\'' +
                 ", identity='" + identity + '\'' +
                 ", trigger='" + trigger + '\'' +
                 ", condition='" + condition + '\'' +
-                ", flag=" + flag +
                 ", action='" + action + '\'' +
                 ", desription='" + desription + '\'' +
                 ", severity='" + severity + '\'' +

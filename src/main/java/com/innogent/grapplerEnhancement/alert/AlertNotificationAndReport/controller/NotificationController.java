@@ -43,7 +43,7 @@ public class NotificationController {
 
 //    PUT /api/notifications/{id}: Mark a notification as read.
     @Operation(summary = "Mark Notification as read", description = "Returns Notification with readed ")
-    @PutMapping("/notification/{id}")
+    @PatchMapping("/notification/{id}")
 //  public ResponseEntity<Void> markNotificationAsRead(@PathVariable Long id)
     public ResponseEntity<String> markNotificationAsRead(@PathVariable("id") Long id){
         return ResponseEntity.ok("Notification is marked as read");
