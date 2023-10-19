@@ -2,36 +2,42 @@ package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.contro
 
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Notification;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 public class NotificationController {
 
 
 //  Retrieve a list of notifications for a user by UserId
 //  public ResponseEntity<List<Notification>> getUserNotifications(@RequestParam Long userId)
     @Operation(summary = "Get List of Notification by UserId", description = "Returns List of Notification as per the UserId")
-    @GetMapping("/notification/user/{userId}")
-    public String getUserNotifications(@PathVariable("userId")Long userId){
-        return "We are getting notification by userId : "+userId;
+    @GetMapping("/{userId}/notification")
+    public ResponseEntity<List<Notification>> getUserNotifications(@PathVariable("userId")Long userId){
+//        return new ResponseEntity<>()"We are getting notification by userId : "+userId;
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
 //  Retrieve a list of notifications for a Ticket by TicketId
 //  public ResponseEntity<List<Notification>> getTicketNotifications(@PathVariable("ticketId")Long ticketId)
     @Operation(summary = "Get a List of Notification by TicketId", description = "Returns a List of Notificaion as per the TicketId")
-    @GetMapping("/notification/ticket/{ticketId}")
-    public String getTicketNotifications(@PathVariable("ticketId")Long ticketId){
-        return "We are getting notification by ticketId : "+ticketId;
+    @GetMapping("/{ticketId}/notification")
+    public ResponseEntity<List<Notification>> getTicketNotifications(@PathVariable("ticketId")Long ticketId){
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
 
 //    POST /api/notifications: Create a new notification.
     @Operation(summary = "Create a Notification", description = "Returns created Notification")
-    @PostMapping("/nofification/create")
+    @PostMapping("/nofification")
   //public Notification createNotification( @RequestBody Notification notification)
-    public Notification createNotification(Notification notification){
-        return notification;
+    public ResponseEntity<Notification> createNotification(Notification notification){
+        return ResponseEntity.ok(notification);
     }
 
 
@@ -39,8 +45,8 @@ public class NotificationController {
     @Operation(summary = "Mark Notification as read", description = "Returns Notification with readed ")
     @PutMapping("/notification/{id}")
 //  public ResponseEntity<Void> markNotificationAsRead(@PathVariable Long id)
-    public String markNotificationAsRead(@PathVariable("id") Long id){
-        return "Notification is marked as read";
+    public ResponseEntity<String> markNotificationAsRead(@PathVariable("id") Long id){
+        return ResponseEntity.ok("Notification is marked as read");
     }
 
 //    @GetMapping("/notification")
