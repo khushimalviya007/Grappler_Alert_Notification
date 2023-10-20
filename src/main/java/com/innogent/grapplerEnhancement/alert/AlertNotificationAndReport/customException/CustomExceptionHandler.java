@@ -3,6 +3,7 @@ package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.custom
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,5 +28,11 @@ public class CustomExceptionHandler {
         String message = "requsted data not found.";
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(IdNotFoundException.class)
+    public ResponseEntity<String> handleValidationException(IdNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 
 }
