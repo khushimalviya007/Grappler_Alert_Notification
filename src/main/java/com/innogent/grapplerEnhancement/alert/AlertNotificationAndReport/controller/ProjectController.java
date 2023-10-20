@@ -53,6 +53,4 @@ public class ProjectController {
     public ResponseEntity<Project> deleteProject(@PathVariable("projectId")Long projectId, @RequestBody Project project){
         return projectService.updateProject(projectId,project);
     }
-
-
 }

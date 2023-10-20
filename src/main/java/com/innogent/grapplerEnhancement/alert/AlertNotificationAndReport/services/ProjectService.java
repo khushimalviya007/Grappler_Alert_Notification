@@ -20,6 +20,7 @@ public class ProjectService {
     }
 
     public ResponseEntity<String> deleteProject(Long projectId) {
+
         return ResponseEntity.ok("Project is deleted of id : "+projectId);
     }
 

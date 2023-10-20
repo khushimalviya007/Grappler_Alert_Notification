@@ -20,7 +20,6 @@ import io.swagger.v3.oas.annotations.info.License;
 				termsOfService="https://grappler.innogent.in/dashboard"  ,
 				contact = @Contact ( name = "Rahul Kumar Sen , Chirag Tongia, Khushi Malvia" , email ="rahul.sen@innogent.in ,chirag.tongia@innogent.in , khushi.malviya@innogent.in " ) ,
 				license = @License ( name = "licence",url="https://github.com/khushimalviya007/Grappler_Enhancement")
-
 		)
 )
 
@@ -29,5 +28,5 @@ public class AlertNotificationAndReportApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AlertNotificationAndReportApplication.class, args);
 		System.out.println("Grappler enhancement");
-	}
+	}	
 }
