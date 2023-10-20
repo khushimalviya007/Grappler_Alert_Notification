@@ -6,6 +6,7 @@ import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.reposit
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.services.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,18 +23,18 @@ public class ProjectController {
     @Autowired
     ProjectService projectService;
 
-//    @Operation(summary = "Get a Project by ProjectId", description = "Returns a Project as per the ProjectId")
-//    @GetMapping("/{projectId}")
-//    public ResponseEntity<Object> getProject(@PathVariable("projectId")Long projectId){
-//        return projectService.getProject(projectId);
-//    }
+    @Operation(summary = "Get a Project by ProjectId", description = "Returns a Project as per the ProjectId")
+    @GetMapping("/{projectId}")
+    public ResponseEntity<Project> getProject(@PathVariable("projectId")Long projectId){
+        return  new  ResponseEntity<Project>(projectService.getProjectById(projectId), HttpStatus.OK);
+    }
 
 
-//    @Operation(summary = "Get all Projects", description = "return all projects")
-//    @GetMapping
-//    public ResponseEntity<List<Project>> getAllProject(){
-//        return projectService.getAllProject();
-//    }
+    @Operation(summary = "Get all Projects", description = "return all projects")
+    @GetMapping
+    public List<Project> getAllProject(){
+        return projectService.getAllProject();
+    }
 
     @Operation(summary = "Create a project", description = "Returns the created project")
     @PostMapping

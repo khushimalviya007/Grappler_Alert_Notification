@@ -1,6 +1,7 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jdk.jfr.Name;
 
 import java.util.List;
@@ -12,12 +13,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     @Column(nullable = false )
+    @NotNull(message = "Name field is required")
     private String name;
     @Column(nullable = false )
+    @NotNull(message = "Name field is required")
     private String password;
     @Column(nullable = false )
+    @NotNull(message = "Name field is required")
     private String email;
     @Column(nullable = false)
+    @NotNull(message = "Name field is required")
     private String phoneNo;
     @ManyToMany
     private List<Notification> listOfNotifications;
@@ -119,5 +124,11 @@ public class User {
                 ", listOfAlerts=" + listOfAlerts +
                 ", listOfTickets=" + listOfTickets +
                 '}';
+    }
+    public boolean isValid() {
+        return name != null && !name.isEmpty() &&
+                password != null && !password.isEmpty() &&
+                email != null && !email.isEmpty() &&
+                phoneNo != null && !phoneNo.isEmpty();
     }
 }

@@ -23,6 +23,8 @@ public class TicketController {
     @Operation(summary = "Create a ticket", description = "returns the created ticket")
     @PostMapping
     public ResponseEntity<Ticket> createProject(Ticket ticket){
+        if(ticket.getName().isEmpty())
+            System.out.println("empty");
         return ticketService.createTicket(ticket);
     }
 
