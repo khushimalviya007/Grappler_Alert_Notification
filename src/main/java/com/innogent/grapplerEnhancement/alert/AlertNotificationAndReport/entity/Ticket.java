@@ -15,14 +15,14 @@ public class Ticket {
     private Stages stage;
     @ManyToMany(mappedBy = "listOfTickets")
     List<User> listOfUser;
-    @ManyToOne(optional = false)
+    @ManyToOne//(optional = false)
     private User creator;
 
     @Column(nullable = false)
     private String creationDate;
     @Column(nullable = false)
     private String endDate;
-    @ManyToOne(optional = false)
+    @ManyToOne//(optional = false)
     private Project projectEntity;
 
     public Long getId() {

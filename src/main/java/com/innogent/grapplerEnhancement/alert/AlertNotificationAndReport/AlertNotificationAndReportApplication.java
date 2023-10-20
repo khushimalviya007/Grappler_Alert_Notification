@@ -24,7 +24,6 @@ import io.swagger.v3.oas.annotations.info.License;
 )
 
 public class AlertNotificationAndReportApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(AlertNotificationAndReportApplication.class, args);
 		System.out.println("Grappler enhancement");

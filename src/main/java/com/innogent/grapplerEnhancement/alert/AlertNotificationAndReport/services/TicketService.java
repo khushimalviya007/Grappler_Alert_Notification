@@ -30,7 +30,6 @@ public class TicketService {
     public ResponseEntity<Ticket> updateTicket(Long ticketId, Ticket ticket) {
         Optional<Ticket> optionalTicket=ticketRepositary.findById(ticketId);
         return ResponseEntity.ok(ticketRepositary.findById(ticketId).get());
-
     }
 
 
