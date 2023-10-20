@@ -13,7 +13,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 public class CustomExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<String> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
-        String message = "Invalid input. Please provide a valid value.";
+        String message = "Invalid Url";
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 

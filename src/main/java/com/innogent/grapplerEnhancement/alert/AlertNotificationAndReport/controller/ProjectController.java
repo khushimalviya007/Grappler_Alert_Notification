@@ -74,11 +74,11 @@ public class ProjectController {
 
     @Operation(summary = "Create a project", description = "Returns the created project")
     @PostMapping
-    public ResponseEntity<Project> createProject(Project project) {
+    public ResponseEntity<Project> createProject(@RequestBody Project project) {
         try {
             logger.info("Attempting to create a new project.");
 
-            if (project.getName() == null || project.getName().trim().isEmpty()) {
+            if (project.getName() == null || project.getName().trim().isEmpty() ) {
                 logger.warn("Project name cannot be null or empty.");
                 return new ResponseEntity("Project name cannot be null or empty.", HttpStatus.BAD_REQUEST);
             }
@@ -126,7 +126,7 @@ public class ProjectController {
 
 
     @Operation(summary = "Update Project", description = "Partially update a project")
-    @PatchMapping("/projects/{projectId}")
+    @PatchMapping("/{projectId}")
     public ResponseEntity<Project> partiallyUpdateProject(@PathVariable("projectId") Long projectId, @RequestBody Project partialProject) {
         try {
             logger.info("Attempting to partially update project with ID: " + projectId);
