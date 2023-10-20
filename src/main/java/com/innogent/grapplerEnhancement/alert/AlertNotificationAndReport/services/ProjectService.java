@@ -53,8 +53,7 @@ public class ProjectService {
         if(partialProject.getTicketList()!=null)
             existingProject.setTicketList(partialProject.getTicketList());
 
-        Project updatedProject = projectRepositary.save(existingProject);
-        return updatedProject;
+        return projectRepositary.save(existingProject);
     }
 
 
