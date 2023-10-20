@@ -2,10 +2,15 @@ package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.servic
 
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Project;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries.ProjectRepositary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,36 +19,48 @@ public class ProjectService {
 
     @Autowired
     ProjectRepositary projectRepositary;
+    Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
-    public ResponseEntity<Project> createProject(Project project) {
-        return ResponseEntity.ok(projectRepositary.save(project));
+    public Optional<Project> getProject(Long projectId) {
+        return projectRepositary.findById(projectId);
     }
 
-    public ResponseEntity<String> deleteProject(Long projectId) {
-        return ResponseEntity.ok("Project is deleted of id : "+projectId);
+
+
+    public List<Project> getAllProject() {
+        return  projectRepositary.findAll();
     }
 
-    public ResponseEntity<Project> updateProject(Long projectId, Project project) {
-        Optional<Project> optionalProject=projectRepositary.findById(projectId);
-//        if(optionalProject.isPresent())
-           return ResponseEntity.ok(projectRepositary.findById(projectId).get());
-//        else
-//            return ResponseEntity.ok("No Project exist of id : "+projectId);
-//        projectRepositary.save(project);
-//        return
+    public Project createProject(Project project) {
+        return projectRepositary.save(project);
+
     }
 
-//    public ResponseEntity<List<Project>> getAllProject(){
-//        return ResponseEntity.ok(projectRepositary.findAll());
-//    }
 
-//    public ResponseEntity<Object> getProject(Long projectId) {
-//        Optional<Project> optionalProject=projectRepositary.findById(projectId);
-//        if(optionalProject.isPresent())
-//            return ResponseEntity.ok(projectRepositary.findById(projectId));
-//        else
-//            return ResponseEntity.ok("No Project exist of id : "+projectId);
-//    }
+    public void deleteProject(Long projectId) {
+        projectRepositary.deleteById(projectId);
+    }
+
+
+    public Project partiallyUpdateProject(Project existingProject,Long projectId, Project partialProject) {
+
+        if (partialProject.getName() != null)
+            existingProject.setName(partialProject.getName());
+
+        if(partialProject.getUsers()!=null)
+            existingProject.setUsers(partialProject.getUsers());
+
+        if(partialProject.getTicketList()!=null)
+            existingProject.setTicketList(partialProject.getTicketList());
+
+        Project updatedProject = projectRepositary.save(existingProject);
+        return updatedProject;
+    }
+
+
+
+
+
 
 
 }

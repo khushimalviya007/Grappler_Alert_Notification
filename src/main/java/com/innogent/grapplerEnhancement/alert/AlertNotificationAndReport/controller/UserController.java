@@ -30,7 +30,7 @@ public class UserController {
 
     @Operation(summary = "update a user by userId", description = "Returns the updated User object status")
     @PatchMapping("/{userId}")
-    public ResponseEntity<User> deleteUser(@PathVariable("userId")Long userId, @RequestBody User user){
+    public ResponseEntity<User> updateUser(@PathVariable("userId")Long userId, @RequestBody User user){
         return userService.updateUser(userId,user);
     }
 }
