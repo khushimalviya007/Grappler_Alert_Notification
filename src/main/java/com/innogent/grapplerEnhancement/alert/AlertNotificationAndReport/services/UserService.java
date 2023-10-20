@@ -3,7 +3,6 @@ package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.servic
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.User;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries.UserRepositary;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

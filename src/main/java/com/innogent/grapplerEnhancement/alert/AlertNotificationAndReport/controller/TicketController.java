@@ -1,9 +1,6 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controller;
 
-import com.fasterxml.jackson.datatype.jsr310.deser.key.LocalDateTimeKeyDeserializer;
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Project;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Ticket;
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries.TicketRepositary;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.services.TicketService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;

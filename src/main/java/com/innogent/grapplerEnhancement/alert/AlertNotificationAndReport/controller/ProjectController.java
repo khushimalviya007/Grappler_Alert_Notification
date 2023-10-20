@@ -1,7 +1,6 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controller;
 
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Project;
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Ticket;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries.ProjectRepositary;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.services.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
