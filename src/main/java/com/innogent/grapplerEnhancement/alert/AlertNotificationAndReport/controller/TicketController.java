@@ -22,7 +22,7 @@ public class TicketController {
 
     @Operation(summary = "Create a ticket", description = "returns the created ticket")
     @PostMapping
-    public ResponseEntity<Ticket> createProject(Ticket ticket){
+    public ResponseEntity<Ticket> createTicket(Ticket ticket){
         return ticketService.createTicket(ticket);
     }
 

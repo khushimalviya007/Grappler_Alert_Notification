@@ -18,6 +18,7 @@ public class UserService {
     }
 
     public ResponseEntity<String> deleteUser(Long userId) {
+        userRepositary.deleteById(userId);
         return ResponseEntity.ok("User is deleted of id : "+userId);
 
     }
