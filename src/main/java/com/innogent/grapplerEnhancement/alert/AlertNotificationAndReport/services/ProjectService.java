@@ -26,9 +26,7 @@ public class ProjectService {
 
     public ProjectDto createProject(ProjectDto projectDto) {
         Project project=this.modelMapper.map(projectDto,Project.class);
-
         projectRepositary.save(project);
-
         return this.modelMapper.map(project,ProjectDto.class);
     }
     public ProjectDto getProject(Long projectId) {
@@ -48,23 +46,27 @@ public class ProjectService {
 
 
     public void deleteProject(Long projectId) {
-        projectRepositary.deleteById(projectId);
+        Project project = projectRepositary.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
+        projectRepositary.delete(project);
     }
 
 
-    public Project partiallyUpdateProject(Project existingProject,Long projectId, Project partialProject) {
+    public ProjectDto partiallyUpdateProject(Long projectId, Project partialProject) {
+
+        Project existingProject = projectRepositary.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
+
 
         if (partialProject.getName() != null)
             existingProject.setName(partialProject.getName());
 
-        if(partialProject.getUsers()!=null)
-            existingProject.setUsers(partialProject.getUsers());
-
-        if(partialProject.getTickets()!=null)
-            existingProject.setTickets(partialProject.getTickets());
+//        if(partialProject.getUsers()!=null)
+//            existingProject.setUsers(partialProject.getUsers());
+//
+//        if(partialProject.getTickets()!=null)
+//            existingProject.setTickets(partialProject.getTickets());
 
         Project updatedProject = projectRepositary.save(existingProject);
-        return updatedProject;
+        return this.modelMapper.map(updatedProject,ProjectDto.class);
     }
 
 }
