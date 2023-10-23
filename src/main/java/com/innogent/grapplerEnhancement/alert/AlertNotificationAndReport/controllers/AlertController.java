@@ -1,6 +1,6 @@
-package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controller;
+package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controllers;
 
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Alert;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Alert;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-//@RequestMapping("/api")
+@RequestMapping("/alerts")
 public class AlertController {
 
 //  Retrieve a list of alerts for a User by UserId

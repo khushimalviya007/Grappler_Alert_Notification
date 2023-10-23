@@ -1,4 +1,4 @@
-package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity;
+package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities;
 
 import jakarta.persistence.*;
 
@@ -19,8 +19,8 @@ public class Alert {
     @Column(nullable = false )
     private LocalDateTime dateAndTime;
     private String response;
-    @ManyToMany(mappedBy = "listOfAlerts")
-    private List<User> listOfUsers;
+    @ManyToMany(mappedBy = "alerts")
+    private List<User> users;
     @ManyToOne
     private Ticket ticket;
     @ManyToOne
@@ -37,7 +37,7 @@ public class Alert {
         this.channels = channels;
         this.dateAndTime = dateAndTime;
         this.response = response;
-        this.listOfUsers = listOfUsers;
+        this.users = listOfUsers;
         this.ticket = ticket;
         this.project = project;
         this.template = template;
@@ -96,11 +96,11 @@ public class Alert {
     }
 
     public List<User> getListOfUsers() {
-        return listOfUsers;
+        return users;
     }
 
     public void setListOfUsers(List<User> listOfUsers) {
-        this.listOfUsers = listOfUsers;
+        this.users = listOfUsers;
     }
 
     public Ticket getTicket() {

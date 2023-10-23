@@ -1,51 +1,70 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.services;
 
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Project;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.customExceptions.ResourceNotFoundException;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Project;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.ProjectDto;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries.ProjectRepositary;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
 
     @Autowired
     ProjectRepositary projectRepositary;
+    @Autowired
+    ModelMapper modelMapper;
 
-    public ResponseEntity<Project> createProject(Project project) {
-        return new  ResponseEntity<Project>(projectRepositary.save(project), HttpStatus.OK);
+    Logger logger = LoggerFactory.getLogger(ProjectService.class);
+
+    public ProjectDto createProject(ProjectDto projectDto) {
+        Project project=this.modelMapper.map(projectDto,Project.class);
+
+        projectRepositary.save(project);
+
+        return this.modelMapper.map(project,ProjectDto.class);
+    }
+    public ProjectDto getProject(Long projectId) {
+
+        Project project = projectRepositary.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
+        return this.modelMapper.map(project,ProjectDto.class);
+
     }
 
-    public ResponseEntity<String> deleteProject(Long projectId) {
-        return ResponseEntity.ok("Project is deleted of id : "+projectId);
+
+
+    public List<ProjectDto> getAllProject() {
+        List<Project> allProjects = projectRepositary.findAll();
+        return allProjects.stream().map((project) -> this.modelMapper.map(project,ProjectDto.class)).collect(Collectors.toList());
     }
 
-    public ResponseEntity<Project> updateProject(Long projectId, Project project) {
-        Optional<Project> optionalProject=projectRepositary.findById(projectId);
-//        if(optionalProject.isPresent())
-           return ResponseEntity.ok(projectRepositary.findById(projectId).get());
-//        else
-//            return ResponseEntity.ok("No Project exist of id : "+projectId);
-//        projectRepositary.save(project);
-//        return
+
+
+    public void deleteProject(Long projectId) {
+        projectRepositary.deleteById(projectId);
     }
 
-    public List<Project> getAllProject(){
-        return projectRepositary.findAll();
-    }
 
-    public Project getProjectById(Long projectId) {
-        Optional<Project> optionalProject=projectRepositary.findById(projectId);
-        if(optionalProject.isPresent())
-            return projectRepositary.findById(projectId).get();
-        else
-            return null;
-    }
+    public Project partiallyUpdateProject(Project existingProject,Long projectId, Project partialProject) {
 
+        if (partialProject.getName() != null)
+            existingProject.setName(partialProject.getName());
+
+        if(partialProject.getUsers()!=null)
+            existingProject.setUsers(partialProject.getUsers());
+
+        if(partialProject.getTickets()!=null)
+            existingProject.setTickets(partialProject.getTickets());
+
+        Project updatedProject = projectRepositary.save(existingProject);
+        return updatedProject;
+    }
 
 }

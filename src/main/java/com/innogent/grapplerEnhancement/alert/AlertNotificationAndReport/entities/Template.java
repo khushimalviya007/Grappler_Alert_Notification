@@ -1,4 +1,4 @@
-package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity;
+package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities;
 
 import jakarta.persistence.*;
 

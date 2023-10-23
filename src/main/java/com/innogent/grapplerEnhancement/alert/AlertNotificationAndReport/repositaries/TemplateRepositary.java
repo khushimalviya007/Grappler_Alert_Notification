@@ -1,6 +1,6 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries;
 
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Template;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Template;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

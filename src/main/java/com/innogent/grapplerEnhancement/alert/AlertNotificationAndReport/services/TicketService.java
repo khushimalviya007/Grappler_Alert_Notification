@@ -1,15 +1,11 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.services;
 
-import com.fasterxml.jackson.datatype.jsr310.deser.key.LocalDateTimeKeyDeserializer;
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Project;
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Ticket;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Ticket;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries.TicketRepositary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
