@@ -1,4 +1,4 @@
-package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity;
+package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities;
 
 import jakarta.persistence.*;
 
@@ -20,7 +20,7 @@ public class Notification {
     private LocalDateTime dateAndTime;
     @Column(nullable = false ,columnDefinition = "boolean default false")
     private boolean isRead;
-    @ManyToMany(mappedBy = "listOfNotifications")
+    @ManyToMany(mappedBy = "notifications")
     private List<User> listOfUser;
     @OneToOne
     private Template template;

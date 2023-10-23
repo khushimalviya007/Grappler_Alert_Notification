@@ -1,6 +1,6 @@
-package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controller;
+package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controllers;
 
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Notification;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Notification;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-//@RequestMapping("/api")
+@RequestMapping("/notifications")
 public class NotificationController {
 
 
@@ -43,7 +43,7 @@ public class NotificationController {
 
 //    PUT /api/notifications/{id}: Mark a notification as read.
     @Operation(summary = "Mark Notification as read", description = "Returns Notification with readed ")
-    @PutMapping("/notification/{id}")
+    @PatchMapping("/notification/{id}")
 //  public ResponseEntity<Void> markNotificationAsRead(@PathVariable Long id)
     public ResponseEntity<String> markNotificationAsRead(@PathVariable("id") Long id){
         return ResponseEntity.ok("Notification is marked as read");

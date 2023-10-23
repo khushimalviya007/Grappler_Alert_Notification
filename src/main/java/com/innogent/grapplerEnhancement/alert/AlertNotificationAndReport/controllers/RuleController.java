@@ -1,6 +1,6 @@
-package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controller;
+package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controllers;
 
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Rule;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Rule;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ import java.util.List;
 public class RuleController {
 
     @Operation(summary = "Get list of rule", description = "Returns list of rule")
-    @GetMapping("/rule")
+    @GetMapping("/rules")
     public ResponseEntity<List<Rule>> getRule(){
 
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
