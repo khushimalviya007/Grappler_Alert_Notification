@@ -29,6 +29,7 @@ public class AlertNotificationAndReportApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AlertNotificationAndReportApplication.class, args);
+		System.out.println("Start...");
 	}
 	@Bean
 	public ModelMapper modelMapper(){ return new ModelMapper();}

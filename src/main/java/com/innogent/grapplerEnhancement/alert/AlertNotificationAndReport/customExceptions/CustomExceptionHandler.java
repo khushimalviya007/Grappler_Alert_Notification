@@ -56,7 +56,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Map<String, Object> objectBody = new LinkedHashMap<>();
-        objectBody.put("Current Timestamp", new Date());
         Map<String ,String> errors=new LinkedHashMap();
         // Get all errors
         ex.getBindingResult()
@@ -68,6 +67,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                 });
 
         objectBody.put("Errors",errors);
+        objectBody.put("Success",false);
+        objectBody.put("Current Timestamp", new Date());
+
         return new ResponseEntity<>(objectBody, status);
     }
 

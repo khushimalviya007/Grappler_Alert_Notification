@@ -1,6 +1,8 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controllers;
 
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.customExceptions.ResourceNotFoundException;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Project;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.ApiResponse;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.ProjectDto;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries.ProjectRepositary;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.services.ProjectService;
@@ -39,26 +41,26 @@ public class ProjectController {
             return ResponseEntity.ok(createdProjectDto);
         } catch (DataIntegrityViolationException e) {
             logger.error("Database error: " + e.getMessage());
-            return new ResponseEntity("A project with the same name already exists. " + e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity( new ApiResponse(e.getMessage(),false), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             logger.error("An error occurred while creating a project: " + e.getMessage());
-            return new ResponseEntity("An error occurred while creating the project. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity( new ApiResponse(e.getMessage(),false), HttpStatus.BAD_REQUEST);
         }
     }
 
     @Operation(summary = "Get a Project by ProjectId", description = "Returns a Project as per the ProjectId")
     @GetMapping("/{projectId}")
-    public ResponseEntity<ProjectDto> getProject(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<ProjectDto> getProject(@Valid @PathVariable("projectId") Long projectId) {
         try {
             logger.info("Attempting to retrieve project with ID: " + projectId);
-
-            ProjectDto projectDto= projectService.getProject(projectId);
-                logger.info("Successfully retrieved project with ID: " + projectId);
-                return ResponseEntity.ok(projectDto);
-
+            ProjectDto projectDto = projectService.getProject(projectId);
+            logger.info("Successfully retrieved project with ID: " + projectId);
+            return ResponseEntity.ok(projectDto);
+        }catch (ResourceNotFoundException e){
+            throw e;
         } catch (Exception e) {
             logger.error("Error occurred while retrieving project with ID " + projectId + ": " + e.getMessage(), e);
-            return new ResponseEntity("An error occurred while getting the project. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(new ApiResponse(e.getMessage(),false) , HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -76,11 +78,11 @@ public class ProjectController {
             } else {
                 logger.warn("No projects found.");
                 String errorMessage = "Project data not found because no data is present.";
-                return new ResponseEntity(errorMessage, HttpStatus.NOT_FOUND);
+                return new ResponseEntity(new ApiResponse(errorMessage,false), HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
             logger.error("Error occurred while getting all projects: " + e.getMessage(), e);
-            return new ResponseEntity("An error occurred while getting projects.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(new ApiResponse(e.getMessage(),false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -88,51 +90,43 @@ public class ProjectController {
 
     @Operation(summary = "Delete a project by ProjectID", description = "Returns the deletion status")
     @DeleteMapping("/{projectId}")
-    public ResponseEntity<String> deleteProject(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<String> deleteProject(@Valid @PathVariable("projectId") Long projectId) {
         try {
             logger.info("Attempting to delete project with ID: " + projectId);
 
-            Optional<Project> optionalProject = projectRepositary.findById(projectId);
-            if (optionalProject.isPresent()) {
                 projectService.deleteProject(projectId);
                 logger.info("Successfully deleted project with ID: " + projectId);
-                return ResponseEntity.ok("Project with ID " + projectId + " has been successfully deleted.");
-            }
-        } catch (Exception e) {
+                return new ResponseEntity(new ApiResponse("Project with ID " + projectId + " has been successfully deleted.",true),HttpStatus.OK);
+        }catch (ResourceNotFoundException ex){
+            logger.warn(ex.getMessage());
+            throw ex;
+        }catch (Exception e) {
             // Handle other exceptions (e.g., database connection issues, unexpected errors)
-            String errorMessage = "An error occurred while trying to delete the project with ID " + projectId + ": " + e.getMessage();
-            logger.error(errorMessage, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+             logger.error( e.getMessage());
+            return new ResponseEntity(new ApiResponse(e.getMessage(),false),HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        String errorMessage = "Project with ID " + projectId + " not found.";
-        logger.warn(errorMessage);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
     }
 
 
-
-
-
     @Operation(summary = "Update Project", description = "Partially update a project")
-    @PatchMapping("/projects/{projectId}")
-    public ResponseEntity<Project> partiallyUpdateProject(@PathVariable("projectId") Long projectId, @RequestBody Project partialProject) {
+    @PatchMapping("/{projectId}")
+    public ResponseEntity<ProjectDto> partiallyUpdateProject(@Valid @PathVariable("projectId") Long projectId, @RequestBody Project partialProject) {
         try {
             logger.info("Attempting to partially update project with ID: " + projectId);
 
-            Optional<Project> optionalProject = projectRepositary.findById(projectId);
-            if (optionalProject.isPresent()) {
-                Project updatedProject = projectService.partiallyUpdateProject(optionalProject.get(), projectId, partialProject);
+                ProjectDto updatedProject = projectService.partiallyUpdateProject(projectId, partialProject);
                 logger.info("Successfully partially updated project with ID: " + projectId);
                 return ResponseEntity.ok(updatedProject);
-            }else{
-                String errorMessage = "Project with ID " + projectId + " not found.";
-                logger.warn(errorMessage);
-                return new ResponseEntity(errorMessage, HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
+
+        }
+        catch (ResourceNotFoundException e){
+            logger.warn(e.getMessage());
+            throw e;
+        }
+        catch (Exception e) {
             logger.error("An error occurred while partially updating project with ID " + projectId + ": " + e.getMessage(), e);
-            return new ResponseEntity("An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(new ApiResponse(e.getMessage(),false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
