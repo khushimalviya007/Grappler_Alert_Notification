@@ -1,9 +1,11 @@
-package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controller;
+package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controllers;
 
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity.Project;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Project;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.ProjectDto;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries.ProjectRepositary;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.services.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/project")
+@RequestMapping("/projects")
 public class ProjectController {
 
     @Autowired
@@ -27,23 +29,33 @@ public class ProjectController {
 
     Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
+    @Operation(summary = "Create a project", description = "Returns the created project")
+    @PostMapping
+    public ResponseEntity<ProjectDto> createProject(@Valid @RequestBody ProjectDto projectDto) {
+        try {
+            logger.info("Attempting to create a new project.");
+            ProjectDto createdProjectDto = projectService.createProject(projectDto);
+            logger.info("Successfully created a new project with ID: " + createdProjectDto.getId());
+            return ResponseEntity.ok(createdProjectDto);
+        } catch (DataIntegrityViolationException e) {
+            logger.error("Database error: " + e.getMessage());
+            return new ResponseEntity("A project with the same name already exists. " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            logger.error("An error occurred while creating a project: " + e.getMessage());
+            return new ResponseEntity("An error occurred while creating the project. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @Operation(summary = "Get a Project by ProjectId", description = "Returns a Project as per the ProjectId")
     @GetMapping("/{projectId}")
-    public ResponseEntity<Project> getProject(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<ProjectDto> getProject(@PathVariable("projectId") Long projectId) {
         try {
             logger.info("Attempting to retrieve project with ID: " + projectId);
 
-            Optional<Project> optionalProject = projectService.getProject(projectId);
-            if (optionalProject.isPresent()) {
-                Project project = optionalProject.get();
+            ProjectDto projectDto= projectService.getProject(projectId);
                 logger.info("Successfully retrieved project with ID: " + projectId);
-                return ResponseEntity.ok(project);
-            } else {
-                logger.warn("No project found with ID: " + projectId);
-                String errorMessage = "Project with ID " + projectId + " not found.";
-                return new ResponseEntity(errorMessage, HttpStatus.NOT_FOUND);
-            }
+                return ResponseEntity.ok(projectDto);
+
         } catch (Exception e) {
             logger.error("Error occurred while retrieving project with ID " + projectId + ": " + e.getMessage(), e);
             return new ResponseEntity("An error occurred while getting the project. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -53,11 +65,11 @@ public class ProjectController {
 
     @Operation(summary = "Get all Projects", description = "return all projects")
     @GetMapping
-    public ResponseEntity<List<Project>> getAllProject() {
+    public ResponseEntity<List<ProjectDto>> getAllProject() {
         try {
             logger.info("Attempting to retrieve all projects.");
 
-            List<Project> projects = projectService.getAllProject();
+            List<ProjectDto> projects = projectService.getAllProject();
             if (!projects.isEmpty()) {
                 logger.info("Successfully retrieved all projects.");
                 return ResponseEntity.ok(projects);
@@ -69,29 +81,6 @@ public class ProjectController {
         } catch (Exception e) {
             logger.error("Error occurred while getting all projects: " + e.getMessage(), e);
             return new ResponseEntity("An error occurred while getting projects.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Operation(summary = "Create a project", description = "Returns the created project")
-    @PostMapping
-    public ResponseEntity<Project> createProject(@RequestBody Project project) {
-        try {
-            logger.info("Attempting to create a new project.");
-
-            if (project.getName() == null || project.getName().trim().isEmpty() ) {
-                logger.warn("Project name cannot be null or empty.");
-                return new ResponseEntity("Project name cannot be null or empty.", HttpStatus.BAD_REQUEST);
-            }
-
-            Project createdProject = projectService.createProject(project);
-            logger.info("Successfully created a new project with ID: " + createdProject.getId());
-            return ResponseEntity.ok(createdProject);
-        } catch (DataIntegrityViolationException e) {
-            logger.error("Database error: " + e.getMessage());
-            return new ResponseEntity("A project with the same name already exists. " + e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            logger.error("An error occurred while creating a project: " + e.getMessage());
-            return new ResponseEntity("An error occurred while creating the project. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -126,7 +115,7 @@ public class ProjectController {
 
 
     @Operation(summary = "Update Project", description = "Partially update a project")
-    @PatchMapping("/{projectId}")
+    @PatchMapping("/projects/{projectId}")
     public ResponseEntity<Project> partiallyUpdateProject(@PathVariable("projectId") Long projectId, @RequestBody Project partialProject) {
         try {
             logger.info("Attempting to partially update project with ID: " + projectId);
