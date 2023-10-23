@@ -1,9 +1,12 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controllers;
 
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Ticket;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.TicketDto;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.services.TicketService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +20,8 @@ public class TicketController {
 
     @Operation(summary = "Create a ticket", description = "returns the created ticket")
     @PostMapping
-    public ResponseEntity<Ticket> createTicket(Ticket ticket){
-        return ticketService.createTicket(ticket);
+    public ResponseEntity<TicketDto> createTicket(@Valid @RequestBody TicketDto ticketDto){
+        return new ResponseEntity<>(ticketService.createTicket(ticketDto), HttpStatus.CREATED);
     }
 
 
