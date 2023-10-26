@@ -33,15 +33,12 @@ public class TicketService {
     }
 
 
-//    public ResponseEntity<Object> getTicketByTicketId(Long ticketId) {
-//        Optional<Ticket> optionalProject=ticketRepositary.findById(ticketId);
-//        if(optionalProject.isPresent())
-//            return ResponseEntity.ok(ticketRepositary.findById(ticketId));
-//        else
-//            return ResponseEntity.ok("No Ticket exist of ticketId : "+ticketId);
-//    }
-
-
-
+    public ResponseEntity<Object> getTicketByTicketId(Long ticketId) {
+        Optional<Ticket> optionalProject=ticketRepositary.findById(ticketId);
+        if(optionalProject.isPresent())
+            return ResponseEntity.ok(ticketRepositary.findById(ticketId));
+        else
+            return ResponseEntity.ok("No Ticket exist of ticketId : "+ticketId);
+    }
 
 }

@@ -1,9 +1,16 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import java.util.List;
 
+//@JsonIdentityInfo(
+//        generator = ObjectIdGenerators.PropertyGenerator.class,
+//        property = "id"
+//)
 @Entity
 public class Ticket {
     @Id
@@ -11,19 +18,20 @@ public class Ticket {
     private Long id;
     @Column(nullable = false)
     private String name;
-    @Column(nullable = false ,columnDefinition = "VARCHAR(255) default 'TODO'")
-    private Stages stage;
+    @Column(nullable = false)
+    private Stages stage = Stages.TODO;
     @ManyToMany(mappedBy = "listOfTickets")
-    List<User> listOfUser;
-    @ManyToOne//(optional = false)
-    private User creator;
-
+    @JsonIgnore
+    List<User> assigness;
+    @ManyToOne
+    private User assignedBy;
     @Column(nullable = false)
     private String creationDate;
     @Column(nullable = false)
     private String endDate;
-    @ManyToOne//(optional = false)
-    private Project projectEntity;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
 
     public Long getId() {
         return id;
@@ -50,19 +58,19 @@ public class Ticket {
     }
 
     public List<User> getListOfUser() {
-        return listOfUser;
+        return assigness;
     }
 
     public void setListOfUser(List<User> listOfUser) {
-        this.listOfUser = listOfUser;
+        this.assigness = listOfUser;
     }
 
     public User getCreator() {
-        return creator;
+        return assignedBy;
     }
 
     public void setCreator(User creator) {
-        this.creator = creator;
+        this.assignedBy = creator;
     }
 
     public String getCreationDate() {
@@ -82,38 +90,37 @@ public class Ticket {
     }
 
     public Project getProjectEntity() {
-        return projectEntity;
+        return project;
     }
 
-    public void setProjectEntity(Project projectEntity) {
-        this.projectEntity = projectEntity;
+    public void setProjectEntity(Project project) {
+        this.project = project;
     }
 
-    public Ticket(Long id, String name, Stages stage, List<User> listOfUser, User creator, String creationDate, String endDate, Project projectEntity) {
+    public Ticket(Long id, String name, Stages stage, List<User> listOfUser, User creator, String creationDate, String endDate, Project project) {
         this.id = id;
         this.name = name;
         this.stage = stage;
-        this.listOfUser = listOfUser;
-        this.creator = creator;
+        this.assigness = listOfUser;
+        this.assignedBy = creator;
         this.creationDate = creationDate;
         this.endDate = endDate;
-        this.projectEntity = projectEntity;
+        this.project = project;
     }
 
     public Ticket() {
     }
-
-    @Override
-    public String toString() {
-        return "Ticket_Entity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", stage=" + stage +
-                ", listOfUser=" + listOfUser +
-                ", creator=" + creator +
-                ", creationDate='" + creationDate + '\'' +
-                ", endDate='" + endDate + '\'' +
-                ", projectEntity=" + projectEntity +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Ticket_Entity{" +
+//                "id=" + id +
+//                ", name='" + name + '\'' +
+//                ", stage=" + stage +
+//                ", asignees=" + assigness +
+//                ", assigneedBy=" + assignedBy +
+//                ", creationDate='" + creationDate + '\'' +
+//                ", endDate='" + endDate + '\'' +
+//                ", project=" + project +
+//                '}';
+//    }
 }

@@ -26,43 +26,42 @@ public class TicketController {
     @Autowired
     TicketRepositary ticketRepositary;
 
-    Logger logger= LoggerFactory.getLogger(TicketController.class);
+    Logger logger = LoggerFactory.getLogger(TicketController.class);
 
     @Operation(summary = "Create a ticket", description = "returns the created ticket")
     @PostMapping
-    public ResponseEntity<Ticket> createProject(@RequestBody Ticket ticket){
-       try {
-           logger.info("Received a request to create a ticket: {}", ticket);
-           ResponseEntity<Ticket> response = ticketService.createTicket(ticket);
-           logger.info("Ticket created successfully");
-           return response;
-       }
-       catch (Exception ex) {
-           logger.error("An error occurred while trying to creating a ticket");
-           throw ex;
-       }
-    }
-
-    @Operation(summary = "Delete a ticket by ticketId", description = "Returns the deletion status")
-    @DeleteMapping("/{ticketId}")
-    public ResponseEntity<String> deleteTicket(@PathVariable("ticketId") Long ticketId) {
+    public ResponseEntity<Ticket> createTicket(@RequestBody Ticket ticket) {
         try {
-            logger.info("Received a request to delete a ticket with ID: {}", ticketId);
-            Optional<Ticket> optionalTicket = ticketRepositary.findById(ticketId);
-            if (optionalTicket.isPresent()) {
-                ticketRepositary.deleteById(ticketId);
-                logger.info("Ticket with ID {} has been deleted successfully", ticketId);
-                return ResponseEntity.ok("Ticket with ID " + ticketId + " has been successfully deleted.");
-            } else {
-                throw new CustomException("Ticket with ID " + ticketId + " not found.", HttpStatus.NOT_FOUND);
-            }
-        } catch (CustomException c) {
-            return ResponseEntity.status(c.getStatus()).body(c.getMessage());
-        } catch (Exception e) {
-            logger.error("An error occurred while trying to delete the ticket with ID {}: {}", ticketId, e.getMessage());
-            throw e;
+            logger.info("Received a request to create a ticket: {}", ticket);
+            ResponseEntity<Ticket> response = ticketService.createTicket(ticket);
+            logger.info("Ticket created successfully");
+            return response;
+        } catch (Exception ex) {
+            logger.error("An error occurred while trying to creating a ticket");
+            throw ex;
         }
     }
+
+//    @Operation(summary = "Delete a ticket by ticketId", description = "Returns the deletion status")
+//    @DeleteMapping("/{ticketId}")
+//    public ResponseEntity<String> deleteTicket(@PathVariable("ticketId") Long ticketId) {
+//        try {
+//            logger.info("Received a request to delete a ticket with ID: {}", ticketId);
+//            Optional<Ticket> optionalTicket = ticketRepositary.findById(ticketId);
+//            if (optionalTicket.isPresent()) {
+//                ticketRepositary.deleteById(ticketId);
+//                logger.info("Ticket with ID {} has been deleted successfully", ticketId);
+//                return ResponseEntity.ok("Ticket with ID " + ticketId + " has been successfully deleted.");
+//            } else {
+//                throw new CustomException("Ticket with ID " + ticketId + " not found.", false);
+//            }
+//        } catch (CustomException c) {
+//            return ResponseEntity.status().body(c.getMessage());
+//        } catch (Exception e) {
+//            logger.error("An error occurred while trying to delete the ticket with ID {}: {}", ticketId, e.getMessage());
+//            throw e;
+//        }
+//    }
 
 //    @Operation(summary = "update a ticket by ticketId", description = "Returns the updated ticket object status")
 //    @PatchMapping("/{ticketId}")
@@ -70,13 +69,12 @@ public class TicketController {
 //        return ticketService.updateTicket(ticketId,ticket);
 //    }
 
-//    @Operation(summary = "Get a Ticket by TicketId", description = "Returns a Ticket as per the TicketId")
-//    @GetMapping("/{ticketId}")
-//    public ResponseEntity<Object> getTicketByTicketId(@PathVariable("ticketId")Long ticketId){
-//        return ticketService.getTicketByTicketId(ticketId);
-//    }
+    @Operation(summary = "Get a Ticket by TicketId", description = "Returns a Ticket as per the TicketId")
+    @GetMapping("/{ticketId}")
+    public ResponseEntity<Object> getTicketByTicketId(@PathVariable("ticketId")Long ticketId){
+        return ticketService.getTicketByTicketId(ticketId);
+    }
 
-//    @
 
 //    @Operation(summary = "Daily Update", description = "Returns the daily Update")
 //    @GetMapping("/ticket/userUpdate/{userId}")

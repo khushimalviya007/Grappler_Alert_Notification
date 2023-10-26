@@ -1,9 +1,17 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 import java.util.List;
-
+//@JsonIdentityInfo(
+//        generator = ObjectIdGenerators.PropertyGenerator.class,
+//        property = "id"
+//)
 @Entity
 public class Project {
 
@@ -11,10 +19,12 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Size(min = 4,message = "Minimum 4 characters are required")
+    @NotEmpty(message = "Name field is mandatory")
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "projectEntity")
+    @OneToMany(mappedBy = "project")
     private List<Ticket> ticketList;
 
     @ManyToMany

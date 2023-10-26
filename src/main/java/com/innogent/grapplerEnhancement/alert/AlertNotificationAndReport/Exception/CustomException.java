@@ -2,14 +2,16 @@ package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.Except
 
 import org.springframework.http.HttpStatus;
 
-public class CustomException extends RuntimeException {
-    private  HttpStatus status;
+public class CustomException<T> {
+    private  boolean status;
     private String message;
-    public CustomException(String message , HttpStatus status) {
-       this.message=message;
+
+    public CustomException(String message , boolean status) {
+        this.message=message;
         this.status= status;
     }
-    public HttpStatus getStatus(){
+
+    public boolean getStatus(){
         return status;
     }
     public  String getMessage()
