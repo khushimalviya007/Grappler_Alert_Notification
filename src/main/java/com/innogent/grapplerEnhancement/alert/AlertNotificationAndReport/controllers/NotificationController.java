@@ -16,6 +16,15 @@ public class NotificationController {
 
     private NotificationService notificationService;
 
+    //    POST /api/notifications: Create a new notification.
+    @Operation(summary = "Create a Notification", description = "Returns created Notification")
+    @PostMapping("/notification")
+    //public Notification createNotification( @RequestBody Notification notification)
+    public ResponseEntity<NotificationDtoForCreate> createNotification(NotificationDtoForCreate notification){
+        notificationService.createNotification(notification);
+        return ResponseEntity.ok(notification);
+    }
+
 //  Retrieve a list of notifications for a user by UserId
 //  public ResponseEntity<List<Notification>> getUserNotifications(@RequestParam Long userId)
     @Operation(summary = "Get List of Notification by UserId", description = "Returns List of Notification as per the UserId")
@@ -34,14 +43,7 @@ public class NotificationController {
     }
 
 
-//    POST /api/notifications: Create a new notification.
-    @Operation(summary = "Create a Notification", description = "Returns created Notification")
-    @PostMapping("/notification")
-  //public Notification createNotification( @RequestBody Notification notification)
-    public ResponseEntity<NotificationDtoForCreate> createNotification(NotificationDtoForCreate notification){
-        notificationService.createNotification(notification);
-        return ResponseEntity.ok(notification);
-    }
+
 
 
 //    PUT /api/notifications/{id}: Mark a notification as read.

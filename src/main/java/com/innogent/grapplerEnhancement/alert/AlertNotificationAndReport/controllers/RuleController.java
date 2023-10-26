@@ -27,9 +27,6 @@ public class RuleController {
     private static final Logger logger = LoggerFactory.getLogger(RuleController.class);
 
     @Autowired
-    private RuleRepositary ruleRepositary;
-
-    @Autowired
     private RuleService ruleService;
 
     @Operation(summary = "Retrieve List of Rules", description = "Returns the List of Rules")

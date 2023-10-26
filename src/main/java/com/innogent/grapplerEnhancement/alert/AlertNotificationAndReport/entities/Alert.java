@@ -28,8 +28,8 @@ public class Alert {
     @Column(nullable = false )
     private String channels;
 
-    @Column(nullable = false )
-    private LocalDateTime dateAndTime;
+//    @Column(nullable = false )
+    private String creationDate;
 
     private String response;
     @ManyToMany(mappedBy = "alerts")
