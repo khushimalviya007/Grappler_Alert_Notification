@@ -1,6 +1,8 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads;
 
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Stages;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertFalse;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -23,7 +25,7 @@ public class TicketDto {
     @NotNull(message = "Assignees field is mandatory")
     private List<UserDto> assignees;
 
-    @NotNull(message = "AssignedBy field is mandatory")
+    @NotNull(message = "Assigned By field is mandatory")
     private UserDto assignedBy;
 
     private String creationDate;

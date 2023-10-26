@@ -10,7 +10,6 @@ public class Rule {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column
     private Sources sources;
 
     @Column(nullable = false)

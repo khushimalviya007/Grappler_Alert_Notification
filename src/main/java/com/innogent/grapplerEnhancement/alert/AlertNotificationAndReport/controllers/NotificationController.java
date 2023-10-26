@@ -1,6 +1,7 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controllers;
 
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Notification;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.services.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.List;
 @RequestMapping("/notifications")
 public class NotificationController {
 
+    private NotificationService notificationService;
 
 //  Retrieve a list of notifications for a user by UserId
 //  public ResponseEntity<List<Notification>> getUserNotifications(@RequestParam Long userId)
@@ -34,7 +36,7 @@ public class NotificationController {
 
 //    POST /api/notifications: Create a new notification.
     @Operation(summary = "Create a Notification", description = "Returns created Notification")
-    @PostMapping("/nofification")
+    @PostMapping("/notification")
   //public Notification createNotification( @RequestBody Notification notification)
     public ResponseEntity<Notification> createNotification(Notification notification){
         return ResponseEntity.ok(notification);

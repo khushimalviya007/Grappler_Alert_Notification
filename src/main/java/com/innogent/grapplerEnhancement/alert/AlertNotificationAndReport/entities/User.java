@@ -3,6 +3,7 @@ package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entiti
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jdk.jfr.Name;
 import lombok.*;
 
@@ -36,7 +37,7 @@ public class User {
     @ManyToMany
     private List<Alert> alerts;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "assignees")
     private List<Ticket> ticketsAssigned;
 
     @ManyToMany(mappedBy = "users")
