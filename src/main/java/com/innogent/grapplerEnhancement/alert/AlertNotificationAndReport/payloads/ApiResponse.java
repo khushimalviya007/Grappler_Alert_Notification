@@ -1,16 +1,15 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads;
 
-import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
-public class ProjectDto {
-    private Long id;
-    @NotBlank(message = "Name of project  cannot be Blank")
-    private String name;
-
+@AllArgsConstructor
+public class ApiResponse {
+    private String message;
+    private boolean success;
 }
