@@ -34,6 +34,7 @@ public class ProjectController {
 
     @Operation(summary = "Get all Projects", description = "return all projects")
     @GetMapping
+
     public ResponseEntity<List<ProjectDto>> getAllProject() {
         try {
             logger.info("Attempting to retrieve all projects.");
