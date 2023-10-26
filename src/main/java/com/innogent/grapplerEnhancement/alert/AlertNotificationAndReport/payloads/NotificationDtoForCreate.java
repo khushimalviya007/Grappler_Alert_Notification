@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 
 public class NotificationDtoForCreate {
-    private Long id;
     private TicketDto ticketDto;
     @NotNull(message = "Project field is mandatory")
     private ProjectDto projectDto;

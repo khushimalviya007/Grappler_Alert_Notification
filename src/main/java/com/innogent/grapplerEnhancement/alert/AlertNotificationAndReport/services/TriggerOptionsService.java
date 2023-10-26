@@ -12,6 +12,11 @@ public class TriggerOptionsService {
     @Autowired
     private TriggerOptionsRepository triggerOptionsRepository;
     public List<TriggerOptions> getAllTriggers(){
+        try {
+
         return this.triggerOptionsRepository.findAll();
+        }catch (Exception e){
+            return null;
+        }
     }
 }
