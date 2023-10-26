@@ -1,6 +1,5 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.services;
 
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service

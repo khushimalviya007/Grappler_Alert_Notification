@@ -31,39 +31,6 @@ public class ProjectController {
 
     Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
-    @Operation(summary = "Create a project", description = "Returns the created project")
-    @PostMapping
-    public ResponseEntity<ProjectDto> createProject(@Valid @RequestBody ProjectDto projectDto) {
-        try {
-            logger.info("Attempting to create a new project.");
-            ProjectDto createdProjectDto = projectService.createProject(projectDto);
-            logger.info("Successfully created a new project with ID: " + createdProjectDto.getId());
-            return ResponseEntity.ok(createdProjectDto);
-        } catch (DataIntegrityViolationException e) {
-            logger.error("Database error: " + e.getMessage());
-            return new ResponseEntity( new ApiResponse(e.getMessage(),false), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            logger.error("An error occurred while creating a project: " + e.getMessage());
-            return new ResponseEntity( new ApiResponse(e.getMessage(),false), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @Operation(summary = "Get a Project by ProjectId", description = "Returns a Project as per the ProjectId")
-    @GetMapping("/{projectId}")
-    public ResponseEntity<ProjectDto> getProject(@Valid @PathVariable("projectId") Long projectId) {
-        try {
-            logger.info("Attempting to retrieve project with ID: " + projectId);
-            ProjectDto projectDto = projectService.getProject(projectId);
-            logger.info("Successfully retrieved project with ID: " + projectId);
-            return ResponseEntity.ok(projectDto);
-        }catch (ResourceNotFoundException e){
-            throw e;
-        } catch (Exception e) {
-            logger.error("Error occurred while retrieving project with ID " + projectId + ": " + e.getMessage(), e);
-            return new ResponseEntity(new ApiResponse(e.getMessage(),false) , HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
 
     @Operation(summary = "Get all Projects", description = "return all projects")
     @GetMapping
@@ -85,6 +52,40 @@ public class ProjectController {
             return new ResponseEntity(new ApiResponse(e.getMessage(),false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Operation(summary = "Get a Project by ProjectId", description = "Returns a Project as per the ProjectId")
+    @GetMapping("/{projectId}")
+    public ResponseEntity<ProjectDto> getProject(@Valid @PathVariable("projectId") Long projectId) {
+        try {
+            logger.info("Attempting to retrieve project with ID: " + projectId);
+            ProjectDto projectDto = projectService.getProject(projectId);
+            logger.info("Successfully retrieved project with ID: " + projectId);
+            return ResponseEntity.ok(projectDto);
+        }catch (ResourceNotFoundException e){
+            throw e;
+        } catch (Exception e) {
+            logger.error("Error occurred while retrieving project with ID " + projectId + ": " + e.getMessage(), e);
+            return new ResponseEntity(new ApiResponse(e.getMessage(),false) , HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Operation(summary = "Create a project", description = "Returns the created project")
+    @PostMapping
+    public ResponseEntity<ProjectDto> createProject(@Valid @RequestBody ProjectDto projectDto) {
+        try {
+            logger.info("Attempting to create a new project.");
+            ProjectDto createdProjectDto = projectService.createProject(projectDto);
+            logger.info("Successfully created a new project with ID: " + createdProjectDto.getId());
+            return ResponseEntity.ok(createdProjectDto);
+        } catch (DataIntegrityViolationException e) {
+            logger.error("Database error: " + e.getMessage());
+            return new ResponseEntity( new ApiResponse(e.getMessage(),false), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            logger.error("An error occurred while creating a project: " + e.getMessage());
+            return new ResponseEntity( new ApiResponse(e.getMessage(),false), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
 
 
