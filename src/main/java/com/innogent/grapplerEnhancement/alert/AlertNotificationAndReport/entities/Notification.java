@@ -7,47 +7,37 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-
     @Column(nullable = false )
     private String title;
-
     @Column(nullable = false )
     private String description;
-
     @Column(nullable = false )
     private String channels;
-
     @Column(nullable = false )
-    private LocalDateTime dateAndTime;
-
+    private Date dateAndTime;
     @Column(nullable = false ,columnDefinition = "boolean default false")
     private boolean isRead;
-
     @ManyToMany(mappedBy = "notifications")
     private List<User> listOfUser;
-
     @OneToOne
     private Template template;
-
     @ManyToOne
     private Ticket ticket;
-
     @ManyToOne
     private Project project;
 
     @ManyToOne
     private Rule rule;
-
-
 }

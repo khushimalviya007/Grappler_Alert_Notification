@@ -22,11 +22,11 @@ public class Ticket {
     @Column(nullable = false )
     private Stages stage=Stages.TODO;
 
-    @ManyToMany(mappedBy = "ticketsAssigned")
+    @ManyToMany
     List<User> assignees;
 
     @ManyToOne(optional = false)
-    private User assigneedBy;
+    private User assignedBy;
 
     @Column(nullable = false)
     private String creationDate;

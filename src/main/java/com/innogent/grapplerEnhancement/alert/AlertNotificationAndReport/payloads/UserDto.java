@@ -7,6 +7,7 @@ import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entitie
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 @Getter
 public class UserDto {
 
+    @Pattern(regexp = "\\d+",message = "must be no only")
     private Long id;
     @NotBlank(message = "Name is mandatory field")
     @Size(min=4,message = "Username must be min 4 characters !!")
