@@ -47,6 +47,14 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ApiResponse response=new ApiResponse(message,false);
         return new ResponseEntity<ApiResponse>(response,HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(ResourceAlreadyExistException.class)
+    public ResponseEntity<ApiResponse> handleResourceAlreadyExistException(ResourceAlreadyExistException ex){
+        String message=ex.getMessage();
+        ApiResponse response=new ApiResponse(message,false);
+        return new ResponseEntity<ApiResponse>(response,HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex){
         String message = ex.getMessage();

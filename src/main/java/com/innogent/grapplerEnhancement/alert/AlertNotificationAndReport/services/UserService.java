@@ -21,40 +21,51 @@ public class UserService {
     @Autowired
     ModelMapper modelMapper;
 
-    public UserDto createUser(UserDto userDto){
-        User user=this.dtoToUser(userDto);
-        try {
 
-        User savedUser= this.userRepositary.save(user);
-        return this.userToDto(savedUser);
-        }catch (Exception e){
-            throw e;
-        }
-    }
-    public UserDto updateUser(UserDto userDto,Long userId){
-        User user = this.userRepositary.findById(userId).orElseThrow(()->new ResourceNotFoundException("User", " id ", userId));
-        user.setName(userDto.getName());
-        user.setEmail(userDto.getEmail());
-        user.setPhoneNo(userDto.getPhoneNo());
-        user.setPassword(user.getPassword());
-
-        User updatedUser = this.userRepositary.save(user);
-        UserDto userDtoUpdated= this.userToDto(updatedUser);
-        return userDtoUpdated;
-    }
-    public UserDto getUserById(Long userId){
-        User user= this.userRepositary.findById(userId).orElseThrow(()->new ResourceNotFoundException("User"," id ",userId));
-        return this.userToDto(user);
-    }
-    public List<UserDto> getAllUsers(){
-        List<User> users=this.userRepositary.findAll();
-        List<UserDto> userDtos=users.stream().map(user->this.userToDto(user)).collect(Collectors.toList());
+    public List<UserDto> getAllUsers() {
+        List<User> users = this.userRepositary.findAll();
+        List<UserDto> userDtos = users.stream().map(user -> this.userToDto(user)).collect(Collectors.toList());
         return userDtos;
     }
+
+        public UserDto getUserById(Long userId){
+            User user= this.userRepositary.findById(userId).orElseThrow(()->new ResourceNotFoundException("User"," id ",userId));
+            return this.userToDto(user);
+        }
+
+    public UserDto createUser(UserDto userDto){
+        User user=this.dtoToUser(userDto);
+        User savedUser=userRepositary.save(user);
+        return this.userToDto(savedUser);
+    }
+
+
+
     public void deleteUser(Long userId){
         User user = this.userRepositary.findById(userId).orElseThrow(()->new ResourceNotFoundException("User" ," id ",userId));
         this.userRepositary.delete(user);
 
+    }
+
+
+    public UserDto updateUser(Long userId,UserDto userDto){
+        User user = this.userRepositary.findById(userId).orElseThrow(()->new ResourceNotFoundException("User", " id ", userId));
+
+        if (userDto.getName() != null)
+            user.setName(userDto.getName());
+
+        if(userDto.getEmail() != null)
+            user.setEmail(userDto.getEmail());
+
+        if(userDto.getPhoneNo() != null)
+            user.setPhoneNo(userDto.getPhoneNo());
+
+        if(userDto.getPassword() != null)
+            user.setPassword(userDto.getPassword());
+
+        User updatedUser = this.userRepositary.save(user);
+        UserDto userDtoUpdated= this.userToDto(updatedUser);
+        return userDtoUpdated;
     }
 
     private User dtoToUser(UserDto userDto){
