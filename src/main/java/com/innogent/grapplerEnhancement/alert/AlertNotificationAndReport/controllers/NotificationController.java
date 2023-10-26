@@ -4,6 +4,8 @@ import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entitie
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.NotificationDtoForCreate;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.services.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import java.util.List;
 @RequestMapping("/notifications")
 public class NotificationController {
 
+    @Autowired
     private NotificationService notificationService;
 
 //  Retrieve a list of notifications for a user by UserId
@@ -36,11 +39,11 @@ public class NotificationController {
 
 //    POST /api/notifications: Create a new notification.
     @Operation(summary = "Create a Notification", description = "Returns created Notification")
-    @PostMapping("/notification")
+    @PostMapping
   //public Notification createNotification( @RequestBody Notification notification)
-    public ResponseEntity<NotificationDtoForCreate> createNotification(NotificationDtoForCreate notification){
-        notificationService.createNotification(notification);
-        return ResponseEntity.ok(notification);
+    public ResponseEntity<NotificationDtoForCreate> createNotification(@Valid @RequestBody NotificationDtoForCreate notification){
+        NotificationDtoForCreate notification1 = notificationService.createNotification(notification);
+        return new ResponseEntity(notification1,HttpStatus.CREATED);
     }
 
 

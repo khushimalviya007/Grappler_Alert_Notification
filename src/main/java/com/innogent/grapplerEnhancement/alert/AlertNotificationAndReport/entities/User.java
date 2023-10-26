@@ -31,7 +31,7 @@ public class User {
     @Column(nullable = false)
     private String phoneNo;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "listOfUser")
     private List<Notification> notifications;
 
     @ManyToMany

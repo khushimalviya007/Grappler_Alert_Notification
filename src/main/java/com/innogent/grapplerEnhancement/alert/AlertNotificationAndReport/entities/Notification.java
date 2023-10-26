@@ -29,7 +29,7 @@ public class Notification {
     private Date dateAndTime;
     @Column(nullable = false ,columnDefinition = "boolean default false")
     private boolean isRead;
-    @ManyToMany(mappedBy = "notifications")
+    @ManyToMany
     private List<User> listOfUser;
     @OneToOne
     private Template template;
