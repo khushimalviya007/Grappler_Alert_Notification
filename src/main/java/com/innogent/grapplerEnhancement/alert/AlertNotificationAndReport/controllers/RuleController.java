@@ -1,5 +1,6 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controllers;
 
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.Exception.CustomException;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.customExceptions.ResourceAlreadyExistException;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.customExceptions.ResourceNotFoundException;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Rule;
@@ -19,22 +20,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/rules")
 public class RuleController {
-
     private static final Logger logger = LoggerFactory.getLogger(RuleController.class);
-
-    @Autowired
-    private RuleRepositary ruleRepositary;
-
     @Autowired
     private RuleService ruleService;
+    @Autowired
+    RuleRepositary ruleRepositary;
 
     @Operation(summary = "Retrieve List of Rules", description = "Returns the List of Rules")
     @GetMapping
-    public ResponseEntity<List<RuleDto>> getAllRules() {
+    public ResponseEntity<?> getAllRules() {
         try {
             logger.info("Attempting to retrieve all rules.");
             List<RuleDto> rules = ruleService.getAllRules();
@@ -46,7 +46,12 @@ public class RuleController {
                 String errorMessage = "Rule data not found because no data is present.";
                 return new ResponseEntity(new ApiResponse(errorMessage, false), HttpStatus.NOT_FOUND);
             }
-        } catch (Exception e) {
+        }
+        catch (ResourceNotFoundException e) {
+            logger.error("ResourceNotFoundException while getting all rules: " + e.getMessage());
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e) {
             logger.error("Error occurred while getting all rules: " + e.getMessage());
             return new ResponseEntity(new ApiResponse(e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -77,12 +82,12 @@ public class RuleController {
             RuleDto rule = ruleService.createRule(ruleDto);
             logger.info("Successfully created a new rule with ID: " + rule.getId());
             return new ResponseEntity<>(rule, HttpStatus.CREATED);
-        } catch (DataIntegrityViolationException e) {
+    } catch (DataIntegrityViolationException e) {
             logger.error("Database error: " + e.getMessage(), e);
             return new ResponseEntity(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
         } catch (ResourceAlreadyExistException e) {
-            logger.warn(e.getMessage());
-            throw e;
+            logger.warn("khushi"+e.getMessage());
+            return  new ResponseEntity(new ApiResponse(e.getMessage(), false), HttpStatus.CONFLICT);
         } catch (Exception e) {
             logger.error("An error occurred while creating a rule: " + e.getMessage(), e);
             return new ResponseEntity(new ApiResponse(e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -123,6 +128,20 @@ public class RuleController {
         }
     }
 
+    @PutMapping("/{ruleId}/disable")
+    public ResponseEntity<Rule> updateRule(@PathVariable("ruleId") Long ruleId) {
+        Optional<Rule> rule = ruleRepositary.findById(ruleId);
+
+        if (rule.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Rule rulee = rule.get();
+        rulee.setIsDeleted(true);
+        ruleRepositary.save(rulee);
+
+        return ResponseEntity.ok(rulee);
+    }
+
     @Operation(summary = "Get Rule by scope", description = "Returns rule by scope")
     @GetMapping("/{sources}/{scope}/{identity}/{trigger}/{condition}")
     public ResponseEntity getRuleByScope(@PathVariable("sources") Sources sources, @PathVariable("scope") String scope, @PathVariable("identity") String identity,
@@ -139,5 +158,3 @@ public class RuleController {
         }
     }
 }
-
-

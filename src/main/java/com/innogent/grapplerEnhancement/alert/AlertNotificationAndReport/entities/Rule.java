@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,7 +35,7 @@ public class Rule {
     private String action;
 
     @Column(nullable = false)
-    private String desription;
+    private String description;
 
     @Column(nullable = false)
     private String severity;

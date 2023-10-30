@@ -25,7 +25,7 @@ public class RuleService {
     @Autowired
     ModelMapper modelMapper;
 
-     final Logger logger = LoggerFactory.getLogger(RuleService.class);
+    final Logger logger = LoggerFactory.getLogger(RuleService.class);
 
     public List<RuleDto> getAllRules() {
         logger.info("Fetching all rules.");
@@ -51,12 +51,13 @@ public class RuleService {
 
     public RuleDto createRule(RuleDto ruleDto) {
         logger.info("Creating a new rule.");
-        Rule ruleExist = ruleRepositary.findBySourcesAndScopeAndIdentityAndTriggerAndConditionAndIsDeletedAndIsEnabled(ruleDto.getSources(), ruleDto.getScope(), ruleDto.getIdentity(), ruleDto.getTrigger(), ruleDto.getCondition(), false, true);
+        List<Rule> ruleExist = ruleRepositary.findBySourcesAndIdentityAndTriggerAndConditionAndIsDeletedAndIsEnabled(ruleDto.getSources(), ruleDto.getIdentity(), ruleDto.getTrigger(), ruleDto.getCondition(), false, true);
 
-        if (ruleExist != null) {
-            throw new ResourceAlreadyExistException("Rule", "id",ruleExist.getId());
+        for(Rule r:ruleExist)
+        {
+            if(ruleDto.getScope().equalsIgnoreCase(r.getScope()))
+                throw new ResourceAlreadyExistException("Rule", "id",r.getId());
         }
-
         Rule rule = this.modelMapper.map(ruleDto, Rule.class);
         rule.setCreationDate(new Date().toString());
         Rule savedRule = ruleRepositary.save(rule);
@@ -100,8 +101,8 @@ public class RuleService {
         if(ruleDto.getAction()!=null)
             nonUpdatedRule.setAction(ruleDto.getAction());
 
-        if(ruleDto.getDesription()!=null)
-            nonUpdatedRule.setDesription(ruleDto.getDesription());
+        if(ruleDto.getDescription()!=null)
+            nonUpdatedRule.setDescription(ruleDto.getDescription());
 
         if(ruleDto.getSeverity()!=null)
             nonUpdatedRule.setSeverity(ruleDto.getSeverity());
@@ -132,8 +133,16 @@ public class RuleService {
         return ruleDto;
     }
 
-    public Rule getRuleByScope(Sources sources, String scope, String identity, String trigger, String condition) {
-        Rule rule = ruleRepositary.findBySourcesAndScopeAndIdentityAndTriggerAndConditionAndIsDeletedAndIsEnabled(sources, scope, identity, trigger, condition, false, true);
+    public List<Rule> getRuleByScope(Sources sources,String scope, String identity, String trigger, String condition) {
+        List<Rule> rule = ruleRepositary.findBySourcesAndIdentityAndTriggerAndConditionAndIsDeletedAndIsEnabled(sources, identity, trigger, condition, false, true);
+        for(Rule r:rule)
+        {
+            if(!scope.equalsIgnoreCase(r.getScope())){
+                if(!(r.getScope().equalsIgnoreCase("global"))){
+                    rule.remove(r);
+                }
+            }
+        }
         return rule;
     }
 }

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/projects")
 public class ProjectController {
@@ -95,15 +95,15 @@ public class ProjectController {
         try {
             logger.info("Attempting to delete project with ID: " + projectId);
 
-                projectService.deleteProject(projectId);
-                logger.info("Successfully deleted project with ID: " + projectId);
-                return new ResponseEntity(new ApiResponse("Project with ID " + projectId + " has been successfully deleted.",true),HttpStatus.OK);
+            projectService.deleteProject(projectId);
+            logger.info("Successfully deleted project with ID: " + projectId);
+            return new ResponseEntity(new ApiResponse("Project with ID " + projectId + " has been successfully deleted.",true),HttpStatus.OK);
         }catch (ResourceNotFoundException ex){
             logger.warn(ex.getMessage());
             throw ex;
         }catch (Exception e) {
             // Handle other exceptions (e.g., database connection issues, unexpected errors)
-             logger.error( e.getMessage());
+            logger.error( e.getMessage());
             return new ResponseEntity(new ApiResponse(e.getMessage(),false),HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -116,9 +116,9 @@ public class ProjectController {
         try {
             logger.info("Attempting to partially update project with ID: " + projectId);
 
-                ProjectDto updatedProject = projectService.partiallyUpdateProject(projectId, partialProject);
-                logger.info("Successfully partially updated project with ID: " + projectId);
-                return ResponseEntity.ok(updatedProject);
+            ProjectDto updatedProject = projectService.partiallyUpdateProject(projectId, partialProject);
+            logger.info("Successfully partially updated project with ID: " + projectId);
+            return ResponseEntity.ok(updatedProject);
 
         }
         catch (ResourceNotFoundException e){
