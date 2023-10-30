@@ -31,86 +31,90 @@ public class UserController {
 
     @Operation(summary = "Get List of  User", description = "Returns the List of Users")
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers(){
+    public ResponseEntity<ApiResponse<?>> getAllUsers(){
         try {
             logger.info("Attempting to retrieve all users.");
 
             List<UserDto> users = userService.getAllUsers();
             if (!users.isEmpty()) {
                 logger.info("Successfully retrieved all users.");
-                return ResponseEntity.ok(users);
+                return new ResponseEntity<>(new ApiResponse<>(users,"Successfully retrieved all users.", true), HttpStatus.OK);
+
             } else {
                 logger.warn("No users found.");
                 String errorMessage = "User data not found because no data is present.";
-                return new ResponseEntity(new ApiResponse(errorMessage,false), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ApiResponse<>(null,errorMessage,false), HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
             logger.error("Error occurred while getting all projects: " + e.getMessage(), e);
-            return new ResponseEntity(new ApiResponse(e.getMessage(),false), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse<>(null,e.getMessage(),false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Operation(summary = "Get a User by userId", description = "Return the User if exist")
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getSingleUser(@Valid @PathVariable("userId") Long userId){
+    public ResponseEntity<ApiResponse<?>> getSingleUser(@Valid @PathVariable("userId") Long userId){
         try {
             logger.info("Attempting to retrieve user with ID: " + userId);
             UserDto userDto = this.userService.getUserById(userId);
             logger.info("Successfully retrieved user with ID: " + userId);
-            return new ResponseEntity<UserDto>(userDto,HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse<>(userDto,"Successfully retrieved user with ID: " + userId, true), HttpStatus.OK);
+
         }catch (ResourceNotFoundException e){
             logger.warn(e.getMessage());
             throw e;
         } catch (Exception e) {
             logger.error("Error occurred while retrieving user with ID " + userId + ": " + e.getMessage());
-            return new ResponseEntity(new ApiResponse(e.getMessage(),false) , HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse<>(null,e.getMessage(),false) , HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Operation(summary = "Create a User", description = "Returns the created User")
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<ApiResponse<?>> createUser(@Valid @RequestBody UserDto userDto) {
         try {
             logger.info("Attempting to create a new User.");
             UserDto createdUserDto = userService.createUser(userDto);
             logger.info("Successfully created a new user with ID: " + createdUserDto.getId());
-            return new ResponseEntity(createdUserDto, HttpStatus.CREATED);
+            return new ResponseEntity<>(new ApiResponse<>(createdUserDto,"Successfully created a new user with ID: " + createdUserDto.getId(), true), HttpStatus.CREATED);
+
         } catch (DataIntegrityViolationException e) {
             logger.error("Database error: " + e.getMessage());
-            return new ResponseEntity( new ApiResponse(e.getMessage(),false), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>( new ApiResponse<>(null,e.getMessage(),false), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             logger.error("An error occurred while creating a user: " + e.getMessage());
-            return new ResponseEntity( new ApiResponse(e.getMessage(),false), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>( new ApiResponse<>(null,e.getMessage(),false), HttpStatus.BAD_REQUEST);
         }
     }
 
 
     @Operation(summary = "Delete a User by userId", description = "Returns the deletion status")
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUser(@Valid @PathVariable("userId") Long userId){
+    public ResponseEntity<ApiResponse<?>> deleteUser(@Valid @PathVariable("userId") Long userId){
         try {
             logger.info("Attempting to delete user with ID: " + userId);
             userService.deleteUser(userId);
             logger.info("Successfully deleted user with ID: " + userId);
-            return new ResponseEntity(new ApiResponse("User deleted successfully",true),HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse<>("Successfully deleted user with ID: " + userId,"User deleted successfully",true),HttpStatus.OK);
         }catch (ResourceNotFoundException ex){
             logger.warn(ex.getMessage());
             throw ex;
         }catch (Exception e) {
             // Handle other exceptions (e.g., database connection issues, unexpected errors)
             logger.error( e.getMessage());
-            return new ResponseEntity(new ApiResponse(e.getMessage(),false),HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse<>(null,e.getMessage(),false),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Operation(summary = "Updating a User by userId", description = "Returns the updated user")
     @PatchMapping("/{userId}")
-    public ResponseEntity<UserDto> updateUser(@Valid @PathVariable("userId") Long userId, @RequestBody UserDto userDto){
+    public ResponseEntity<ApiResponse<?>> updateUser(@Valid @PathVariable("userId") Long userId, @RequestBody UserDto userDto){
         try {
             logger.info("Attempting to partially update user with ID: " + userId);
             UserDto updatedUserDto = this.userService.updateUser(userId,userDto);
             logger.info("Successfully partially updated user with ID: " + userId);
-            return ResponseEntity.ok(updatedUserDto);
+            return new ResponseEntity<>(new ApiResponse<>(updatedUserDto,"Successfully partially updated user with ID: " + userId,true),HttpStatus.OK);
+
         }
         catch (ResourceNotFoundException e){
             logger.warn(e.getMessage());
@@ -118,7 +122,7 @@ public class UserController {
         }
         catch (Exception e) {
             logger.error("An error occurred while partially updating User with ID " + userId + ": " + e.getMessage());
-            return new ResponseEntity(new ApiResponse(e.getMessage(),false), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null,e.getMessage(),false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

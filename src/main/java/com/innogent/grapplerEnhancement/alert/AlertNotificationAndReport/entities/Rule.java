@@ -17,19 +17,23 @@ public class Rule {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
+    @Column(nullable = false)
 
-    private Sources sources=Sources.EVENT;
+    private String name;
+
+    @Column(nullable = false,name="trigger_type")
+    private Trigger trigger=Trigger.EVENT;
 
     @Column(nullable = false)
     private String scope;
 
     @Column(nullable = false)
-    private String identity;
+    private String entity;
 
-    @Column(nullable = false ,name="trigger_field")
-    private String trigger;
+    @Column(nullable = false ,name="field")
+    private String field;
 
-    @Column(nullable = false ,name = "trigger_condition")
+    @Column(nullable = false ,name = "field_condition")
     private String condition;
 
     @Column(nullable = false)
@@ -42,7 +46,7 @@ public class Rule {
     private String severity;
 
     @Column(nullable = false)
-    private String recepientDescription;
+    private String recepient;
 
     @Column(nullable = false)
     private String channel;
