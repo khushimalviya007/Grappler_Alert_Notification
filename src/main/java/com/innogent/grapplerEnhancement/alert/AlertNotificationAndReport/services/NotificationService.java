@@ -51,30 +51,38 @@ public class NotificationService {
         }else {
             note.setProject(project);
         }
+
         note.setRule(ruleById);
         note.setRead(false);
 
         note.setChannels(ruleById.getChannel());
         note.setDateAndTime(new Date());
-        note.setDescription(ruleById.getDesription());
-        note.setTitle(ruleById.getIdentity()+ruleById.getTrigger()+ruleById.getCondition());
-        String recepientDescription = ruleById.getRecepientDescription();
+        if(ticketFinal==null){
+
+            note.setDescription(project.getName()+" : "+ruleById.getDesription());
+        }else {
+            note.setDescription(ticketFinal.getName()+" : "+ruleById.getDesription());
+
+        }
+        note.setTitle(ruleById.getEntity()+ruleById.getTrigger()+ruleById.getCondition());
+        String recepientDescription = ruleById.getRecepient();
+
         String[] users=recepientDescription.split(",");
         List<User> userList= new ArrayList<>();
         for(String s:users){
             if(s.equalsIgnoreCase("ASSIGNED_TO")){
-                if(ruleById.getIdentity().equalsIgnoreCase("PROJECT")){
+                if(ruleById.getEntity().equalsIgnoreCase("PROJECT")){
                     project.getUsers().forEach((user)->userList.add(user));
                 }else {
                     ticketFinal.getAssignees().forEach((user)->userList.add(user));
                 }
             }else if(s.equalsIgnoreCase("ASSIGNED_BY")){
-                if(ruleById.getIdentity().equalsIgnoreCase("PROJECT")){
+                if(ruleById.getEntity().equalsIgnoreCase("PROJECT")){
                 }else {
-                   userList.add(ticketFinal.getAssignedBy()) ;
+                    userList.add(ticketFinal.getAssignedBy()) ;
                 }
             }else if(s.equalsIgnoreCase("BOTH")){
-                if(ruleById.getIdentity().equalsIgnoreCase("PROJECT")){
+                if(ruleById.getEntity().equalsIgnoreCase("PROJECT")){
                     project.getUsers().forEach((user)->userList.add(user));
                 }else {
                     ticketFinal.getAssignees().forEach((user)->userList.add(user));

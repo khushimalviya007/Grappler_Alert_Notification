@@ -1,6 +1,6 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads;
 
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Sources;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Trigger;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -18,17 +18,20 @@ public class RuleDto {
 
     private int id;
 
-//    @NotEmpty(message = "Source is mandatory field")
-    private Sources sources=Sources.EVENT;
+    @NotBlank(message = "name  is mandatory field")
+    private String name;
+
+    //    @NotEmpty(message = "Source is mandatory field")
+    private Trigger trigger=Trigger.EVENT;
 
     @NotBlank(message = "Scope is mandatory field")
     private String scope;
 
     @NotBlank(message = "identity is mandatory field")
-    private String identity;
+    private String entity;
 
     @NotBlank(message = "trigger is mandatory field")
-    private String trigger;
+    private String field;
 
     @NotBlank(message = "condition is mandatory field")
     private String condition;
@@ -43,16 +46,11 @@ public class RuleDto {
     private String severity;
 
     @NotBlank(message = "Recepient Description is mandatory field")
-    private String recepientDescription;
+    private String recepient;
 
     @NotBlank(message = "channel is mandatory field")
     private String channel;
 
-//    @Column(columnDefinition = "boolean default true")
+    //    @Column(columnDefinition = "boolean default true")
     private Boolean isEnabled=true;
 }
-
-
-
-
-

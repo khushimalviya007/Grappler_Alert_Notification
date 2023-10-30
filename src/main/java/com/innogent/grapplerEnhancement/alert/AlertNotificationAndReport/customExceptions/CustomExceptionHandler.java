@@ -25,41 +25,41 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<String> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
+    public ResponseEntity<ApiResponse<?>> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
         String message = "Invalid input. Please provide a valid value.";
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ApiResponse<>(null, message,false),HttpStatus.BAD_REQUEST);
+
     }
 
     @ExceptionHandler(ResourceAccessException.class)
-    public ResponseEntity<String> handleMethodArgumentTypeMismatch1(ResourceAccessException ex) {
+    public ResponseEntity<ApiResponse<?>> handleMethodArgumentTypeMismatch1(ResourceAccessException ex) {
         String message = "Invalid input. Please provide a valid value in URL.";
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ApiResponse<>(null, message,false),HttpStatus.BAD_REQUEST);
+
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
+    public ResponseEntity<ApiResponse<?>> handleEntityNotFoundException(EntityNotFoundException ex) {
         String message = "requsted data not found.";
-        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ApiResponse<>(null, message,false),HttpStatus.NOT_FOUND);
+
     }
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse> handleResourceNotFoundException(ResourceNotFoundException ex){
-        String message=ex.getMessage();
-        ApiResponse response=new ApiResponse(message,false);
-        return new ResponseEntity<ApiResponse>(response,HttpStatus.NOT_FOUND);
+    public ResponseEntity<ApiResponse<?>> handleResourceNotFoundException(ResourceNotFoundException ex){
+        return new ResponseEntity<>(new ApiResponse<>(null, ex.getMessage(),false),HttpStatus.NOT_FOUND);
+
+
     }
 
     @ExceptionHandler(ResourceAlreadyExistException.class)
-    public ResponseEntity<ApiResponse> handleResourceAlreadyExistException(ResourceAlreadyExistException ex){
-        String message=ex.getMessage();
-        ApiResponse response=new ApiResponse(message,false);
-        return new ResponseEntity<ApiResponse>(response,HttpStatus.CONFLICT);
+    public ResponseEntity<ApiResponse<?>> handleResourceAlreadyExistException(ResourceAlreadyExistException ex){
+        return new ResponseEntity<>(new ApiResponse<>(null, ex.getMessage(),false),HttpStatus.CONFLICT);
+
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ApiResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex){
-        String message = ex.getMessage();
-        ApiResponse response= new ApiResponse(message,false);
-        return new ResponseEntity<ApiResponse>(response,HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiResponse<?>> handleDataIntegrityViolationException(DataIntegrityViolationException ex){
+        return new ResponseEntity<>(new ApiResponse<>(null, ex.getMessage(),false),HttpStatus.BAD_REQUEST);
     }
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -74,11 +74,14 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                     errors.put(fieldName,message);
                 });
 
+        objectBody.put("response",null);
         objectBody.put("Errors",errors);
-        objectBody.put("Success",false);
-        objectBody.put("Current Timestamp", new Date());
+//        objectBody.put("Success",false);
+//        objectBody.put("Current Timestamp", new Date());
 
-        return new ResponseEntity<>(objectBody, status);
+//        return new ResponseEntity<>(objectBody, status);
+        return new ResponseEntity<>(new ApiResponse<>(objectBody, ex.getMessage(),false),status);
+
     }
 
 }

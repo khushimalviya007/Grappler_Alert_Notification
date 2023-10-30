@@ -3,10 +3,9 @@ package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.servic
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.customExceptions.ResourceAlreadyExistException;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.customExceptions.ResourceNotFoundException;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Rule;
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Sources;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Trigger;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.RuleDto;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries.RuleRepositary;
-import jakarta.persistence.Column;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,11 +50,14 @@ public class RuleService {
 
     public RuleDto createRule(RuleDto ruleDto) {
         logger.info("Creating a new rule.");
-        Rule ruleExist = ruleRepositary.findBySourcesAndScopeAndIdentityAndTriggerAndConditionAndIsDeletedAndIsEnabled(ruleDto.getSources(), ruleDto.getScope(), ruleDto.getIdentity(), ruleDto.getTrigger(), ruleDto.getCondition(), false, true);
+        List<Rule> ruleExist = ruleRepositary.findByTriggerAndEntityAndFieldAndConditionAndIsDeletedAndIsEnabled(ruleDto.getTrigger(), ruleDto.getEntity(), ruleDto.getField(), ruleDto.getCondition(), false, true);
 
-        if (ruleExist != null) {
-            throw new ResourceAlreadyExistException("Rule", "id",ruleExist.getId());
+        for(Rule r:ruleExist)
+        {
+            if(ruleDto.getScope().equalsIgnoreCase(r.getScope()))
+                throw new ResourceAlreadyExistException("Rule", "id",r.getId());
         }
+
 
         Rule rule = this.modelMapper.map(ruleDto, Rule.class);
         rule.setCreationDate(new Date().toString());
@@ -82,17 +84,21 @@ public class RuleService {
         if(nonUpdatedRule==null)
             throw  new ResourceNotFoundException("Rule", "id", ruleId);
 
-        if(ruleDto.getSources()!=null)
-            nonUpdatedRule.setSources(ruleDto.getSources());
+        if(ruleDto.getName()!=null)
+            nonUpdatedRule.setName(ruleDto.getName());
+
+        if(ruleDto.getTrigger()!=null)
+            nonUpdatedRule.setTrigger(ruleDto.getTrigger());
+
 
         if(ruleDto.getScope()!=null)
             nonUpdatedRule.setScope(ruleDto.getScope());
 
-        if(ruleDto.getIdentity()!=null)
-            nonUpdatedRule.setIdentity(ruleDto.getIdentity());
+        if(ruleDto.getEntity()!=null)
+            nonUpdatedRule.setEntity(ruleDto.getEntity());
 
-        if(ruleDto.getTrigger()!=null)
-            nonUpdatedRule.setTrigger(ruleDto.getTrigger());
+        if(ruleDto.getField()!=null)
+            nonUpdatedRule.setField(ruleDto.getField());
 
         if(ruleDto.getCondition()!=null)
             nonUpdatedRule.setCondition(ruleDto.getCondition());
@@ -106,8 +112,8 @@ public class RuleService {
         if(ruleDto.getSeverity()!=null)
             nonUpdatedRule.setSeverity(ruleDto.getSeverity());
 
-        if(ruleDto.getRecepientDescription()!=null)
-            nonUpdatedRule.setRecepientDescription(ruleDto.getRecepientDescription());
+        if(ruleDto.getRecepient()!=null)
+            nonUpdatedRule.setRecepient(ruleDto.getRecepient());
 
         if(ruleDto.getChannel()!=null)
             nonUpdatedRule.setChannel(ruleDto.getChannel());
@@ -132,8 +138,16 @@ public class RuleService {
         return ruleDto;
     }
 
-    public Rule getRuleByScope(Sources sources, String scope, String identity, String trigger, String condition) {
-        Rule rule = ruleRepositary.findBySourcesAndScopeAndIdentityAndTriggerAndConditionAndIsDeletedAndIsEnabled(sources, scope, identity, trigger, condition, false, true);
+    public List<Rule> getRuleByScope(Trigger trigger, String scope, String entity, String field, String condition) {
+        List<Rule> rule = ruleRepositary.findByTriggerAndEntityAndFieldAndConditionAndIsDeletedAndIsEnabled(trigger, entity, field, condition, false, true);
+        for(Rule r:rule)
+        {
+            if(!scope.equalsIgnoreCase(r.getScope())){
+                if(!(r.getScope().equalsIgnoreCase("global"))){
+                    rule.remove(r);
+                }
+            }
+        }
         return rule;
     }
 }
