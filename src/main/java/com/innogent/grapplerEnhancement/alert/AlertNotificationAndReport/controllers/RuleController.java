@@ -89,6 +89,8 @@ public class RuleController {
         }
     }
 
+
+
     @Operation(summary = "Soft Delete a rule", description = "Returns soft deleted status")
     @DeleteMapping("/{ruleId}")
     public ResponseEntity deleteRule(@PathVariable("ruleId") int ruleId) {
@@ -126,12 +128,12 @@ public class RuleController {
     }
 
     @Operation(summary = "Get Rule by scope", description = "Returns rule by scope")
-    @GetMapping("/{sources}/{scope}/{identity}/{trigger}/{condition}")
+    @GetMapping("/{sources}/{scope}/{identity}/{trigger}/{condition}/{action}")
     public ResponseEntity getRuleByScope(@PathVariable("sources") Trigger sources, @PathVariable("scope") String scope, @PathVariable("identity") String identity,
-                                         @PathVariable("trigger") String trigger, @PathVariable("condition") String condition) {
+                                         @PathVariable("trigger") String trigger, @PathVariable("condition") String condition,@PathVariable("action") String action) {
         try {
             logger.info("Attempting to get by scope.");
-            return new ResponseEntity(new ApiResponse(ruleService.getRuleByScope(sources, scope, identity, trigger, condition),"Rule Found", true), HttpStatus.OK);
+            return new ResponseEntity(new ApiResponse(ruleService.getRuleByScope(sources, scope, identity, trigger, condition,action),"Rule Found", true), HttpStatus.OK);
 
         } catch (DataIntegrityViolationException e) {
             logger.error("Database error: " + e.getMessage());

@@ -28,7 +28,7 @@ public class RuleService {
 
     public List<RuleDto> getAllRules() {
         logger.info("Fetching all rules.");
-        List<Rule> rules = ruleRepositary.findByIsDeletedAndIsEnabled(false, true);
+        List<Rule> rules = ruleRepositary.findByIsDeleted(false);
         if (rules.isEmpty()) {
             throw new ResourceNotFoundException("Rule List", "and size of list is ",0);
         }
@@ -39,7 +39,7 @@ public class RuleService {
 
     public RuleDto getRuleById(Long ruleId) {
         logger.info("Fetching rule by ID: {}", ruleId);
-        Rule rule = this.ruleRepositary.findByIdAndIsDeletedAndIsEnabled(ruleId, false, true);
+        Rule rule = this.ruleRepositary.findByIdAndIsDeleted(ruleId, false);
 
         if (rule == null) {
             throw new ResourceNotFoundException("Rule", "ID", ruleId);
@@ -50,7 +50,7 @@ public class RuleService {
 
     public RuleDto createRule(RuleDto ruleDto) {
         logger.info("Creating a new rule.");
-        List<Rule> ruleExist = ruleRepositary.findByTriggerAndEntityAndFieldAndConditionAndIsDeletedAndIsEnabled(ruleDto.getTrigger(), ruleDto.getEntity(), ruleDto.getField(), ruleDto.getCondition(), false, true);
+        List<Rule> ruleExist = ruleRepositary.findByTriggerAndEntityAndFieldAndConditionAndActionAndIsDeleted(ruleDto.getTrigger(), ruleDto.getEntity(), ruleDto.getField(), ruleDto.getCondition(),ruleDto.getAction(), false);
 
         for(Rule r:ruleExist)
         {
@@ -69,7 +69,7 @@ public class RuleService {
 
     public void deleteRule(int ruleId) {
         logger.info("Deleting rule by ID: {}", ruleId);
-        Rule rule = this.ruleRepositary.findByIdAndIsDeletedAndIsEnabled(ruleId, false, true);
+        Rule rule = this.ruleRepositary.findByIdAndIsDeleted(ruleId, false);
         if (rule == null) {
             throw new ResourceNotFoundException("Rule", "ID", ruleId);
         }
@@ -80,7 +80,7 @@ public class RuleService {
 
     public RuleDto updateRule(Long ruleId, RuleDto ruleDto) {
         logger.info("Updating rule with ID: {}", ruleId);
-        Rule nonUpdatedRule = ruleRepositary.findByIdAndIsDeletedAndIsEnabled(ruleId,false,true);
+        Rule nonUpdatedRule = ruleRepositary.findByIdAndIsDeleted(ruleId,false);
         if(nonUpdatedRule==null)
             throw  new ResourceNotFoundException("Rule", "id", ruleId);
 
@@ -138,8 +138,8 @@ public class RuleService {
         return ruleDto;
     }
 
-    public List<Rule> getRuleByScope(Trigger trigger, String scope, String entity, String field, String condition) {
-        List<Rule> rule = ruleRepositary.findByTriggerAndEntityAndFieldAndConditionAndIsDeletedAndIsEnabled(trigger, entity, field, condition, false, true);
+    public List<Rule> getRuleByScope(Trigger trigger, String scope, String entity, String field, String condition,String action) {
+        List<Rule> rule = ruleRepositary.findByTriggerAndEntityAndFieldAndConditionAndActionAndIsDeleted(trigger, entity, field, condition, action,false);
         for(Rule r:rule)
         {
             if(!scope.equalsIgnoreCase(r.getScope())){

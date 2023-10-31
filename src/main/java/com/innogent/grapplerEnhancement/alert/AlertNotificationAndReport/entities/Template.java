@@ -3,6 +3,7 @@ package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entiti
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "Template")
 public class Template {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

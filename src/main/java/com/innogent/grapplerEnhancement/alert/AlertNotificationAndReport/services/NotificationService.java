@@ -2,15 +2,13 @@ package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.servic
 
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.customExceptions.ResourceNotFoundException;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.*;
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.NotificationDtoForCreate;
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.ProjectDto;
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.RuleDto;
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.TicketDto;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.*;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,68 +36,74 @@ public class NotificationService {
      * as input
      * @return Notification
      * */
-    public NotificationDtoForCreate createNotification(NotificationDtoForCreate notification) {
-        Rule ruleById = ruleRepositary.findById((long)notification.getRule().getId()).orElseThrow(()->new ResourceNotFoundException("Rule","id",notification.getRule().getId()));
+    public NotificationInfo createNotification(NotificationDtoForCreate notification) {
+        Rule rule = ruleRepositary.findById((long)notification.getRule().getId()).orElseThrow(()->new ResourceNotFoundException("Rule","id",notification.getRule().getId()));
         Project project = projectRepositary.findById(notification.getProject().getId()).orElseThrow(()->new ResourceNotFoundException("Project","id",notification.getProject().getId()));;
-        Optional<Ticket> ticket = ticketRepositary.findById(notification.getTicket().getId());
         Notification note = this.modelMapper.map(notification, Notification.class);
+
         Ticket ticketFinal=null;
-        if(ticket.isPresent()){
-            ticketFinal=ticket.get();
+
+        if (notification.getTicket() != null) {
+            Ticket ticket = ticketRepositary.findById(notification.getTicket().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Ticket", "id", notification.getTicket().getId()));
+            ticketFinal = ticket;
             note.setTicket(ticketFinal);
             note.setProject(ticketFinal.getProject());
-        }else {
+        } else {
             note.setProject(project);
         }
 
-        note.setRule(ruleById);
+        note.setTitle(rule.getEntity()+" "+rule.getTrigger()+" "+rule.getCondition());
+        if(ticketFinal==null)
+            note.setDescription(project.getName()+" : "+rule.getDesription());
+        else
+            note.setDescription(ticketFinal.getName()+" : "+rule.getDesription());
+
+        note.setChannels(rule.getChannel());
+        note.setCreationDate(LocalDateTime.now());
         note.setRead(false);
+        note.setRule(rule);
 
-        note.setChannels(ruleById.getChannel());
-        note.setDateAndTime(new Date());
-        if(ticketFinal==null){
+        String recepient = rule.getRecepient();
 
-            note.setDescription(project.getName()+" : "+ruleById.getDesription());
-        }else {
-            note.setDescription(ticketFinal.getName()+" : "+ruleById.getDesription());
-
-        }
-        note.setTitle(ruleById.getEntity()+ruleById.getTrigger()+ruleById.getCondition());
-        String recepientDescription = ruleById.getRecepient();
-
-        String[] users=recepientDescription.split(",");
+        String[] users=recepient.split(",");
         List<User> userList= new ArrayList<>();
         for(String s:users){
             if(s.equalsIgnoreCase("ASSIGNED_TO")){
-                if(ruleById.getEntity().equalsIgnoreCase("PROJECT")){
+                if(rule.getEntity().equalsIgnoreCase("PROJECT")){
                     project.getUsers().forEach((user)->userList.add(user));
-                }else {
+                }else if(ticketFinal!=null){
                     ticketFinal.getAssignees().forEach((user)->userList.add(user));
                 }
             }else if(s.equalsIgnoreCase("ASSIGNED_BY")){
-                if(ruleById.getEntity().equalsIgnoreCase("PROJECT")){
-                }else {
+                if(rule.getEntity().equalsIgnoreCase("PROJECT")){
+                }else if(ticketFinal!=null){
                     userList.add(ticketFinal.getAssignedBy()) ;
                 }
             }else if(s.equalsIgnoreCase("BOTH")){
-                if(ruleById.getEntity().equalsIgnoreCase("PROJECT")){
+                if(rule.getEntity().equalsIgnoreCase("PROJECT")){
                     project.getUsers().forEach((user)->userList.add(user));
-                }else {
+                }else if(ticketFinal!=null){
                     ticketFinal.getAssignees().forEach((user)->userList.add(user));
                     userList.add(ticketFinal.getAssignedBy()) ;
                 }
             }else{
-                try {
                     User byId = userRepositary.findById(Long.valueOf(s)).orElseThrow(() -> new ResourceNotFoundException("User", "id", Long.valueOf(s)));
                     userList.add(byId);
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
             }
         }
-        note.setListOfUser(userList);
+        note.setUserList(userList);
         Notification save = notificationRepositary.save(note);
-        return this.modelMapper.map(save,NotificationDtoForCreate.class);
+        return this.modelMapper.map(save, NotificationInfo.class);
     }
+
+    public NotificationInfo saveIsRead(Long notificationId) {
+        Notification notification = notificationRepositary.findById(notificationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Notification", "id", notificationId));
+        notification.setRead(true);
+        Notification save=notificationRepositary.save(notification);
+        return modelMapper.map(save, NotificationInfo.class);
+    }
+
+
 }

@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -15,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "Notification")
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -29,14 +29,14 @@ public class Notification {
     @Column(nullable = false )
     private String channels;
 
-    @Column(nullable = false )
-    private Date dateAndTime;
+//    @Column(nullable = false )
+    private LocalDateTime creationDate;
 
     @Column(nullable = false ,columnDefinition = "boolean default false")
     private boolean isRead;
 
     @ManyToMany
-    private List<User> listOfUser;
+    private List<User> userList;
 
     @OneToOne
     private Template template;
