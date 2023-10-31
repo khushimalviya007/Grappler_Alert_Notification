@@ -1,11 +1,18 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controllers;
 
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.customExceptions.ResourceNotFoundException;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Notification;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.AlertDtoInfo;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.ApiResponse;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.NotificationDtoForCreate;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.NotificationInfo;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.services.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,49 +23,54 @@ import java.util.List;
 @RequestMapping("/notifications")
 public class NotificationController {
 
+    Logger logger = LoggerFactory.getLogger(AlertController.class);
+
+
+
     @Autowired
     private NotificationService notificationService;
 
-    //  Retrieve a list of notifications for a user by UserId
-//  public ResponseEntity<List<Notification>> getUserNotifications(@RequestParam Long userId)
-    @Operation(summary = "Get List of Notification by UserId", description = "Returns List of Notification as per the UserId")
-    @GetMapping("/{userId}/notification")
-    public ResponseEntity<List<Notification>> getUserNotifications(@PathVariable("userId")Long userId){
-//        return new ResponseEntity<>()"We are getting notification by userId : "+userId;
-        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
-    }
-
-    //  Retrieve a list of notifications for a Ticket by TicketId
-//  public ResponseEntity<List<Notification>> getTicketNotifications(@PathVariable("ticketId")Long ticketId)
-    @Operation(summary = "Get a List of Notification by TicketId", description = "Returns a List of Notificaion as per the TicketId")
-    @GetMapping("/{ticketId}/notification")
-    public ResponseEntity<List<Notification>> getTicketNotifications(@PathVariable("ticketId")Long ticketId){
-        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
-    }
 
 
-    //    POST /api/notifications: Create a new notification.
     @Operation(summary = "Create a Notification", description = "Returns created Notification")
     @PostMapping
-    //public Notification createNotification( @RequestBody Notification notification)
-    public ResponseEntity<NotificationDtoForCreate> createNotification(@Valid @RequestBody NotificationDtoForCreate notification){
-        NotificationDtoForCreate notification1 = notificationService.createNotification(notification);
-        return new ResponseEntity(notification1,HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<?>> createNotification(@Valid @RequestBody NotificationDtoForCreate notification){
+        try {
+            logger.info("Attempting to create a new notification.");
+            NotificationInfo notificationInfo = notificationService.createNotification(notification);
+            logger.info("Successfully created a new notification");
+            return new ResponseEntity<>(new ApiResponse<>(notificationInfo,"Notification is created",true),HttpStatus.CREATED);
+        } catch (DataIntegrityViolationException e) {
+            logger.error("Database error: " + e.getMessage());
+            return new ResponseEntity<>(new ApiResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            logger.error("An error occurred while creating a notification: " + e.getMessage());
+            return new ResponseEntity<>(new ApiResponse<>(null, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
-    //    PUT /api/notifications/{id}: Mark a notification as read.
-    @Operation(summary = "Mark Notification as read", description = "Returns Notification with readed ")
-    @PatchMapping("/notification/{id}")
-//  public ResponseEntity<Void> markNotificationAsRead(@PathVariable Long id)
-    public ResponseEntity<String> markNotificationAsRead(@PathVariable("id") Long id){
-        return ResponseEntity.ok("Notification is marked as read");
+
+    @Operation(summary = "Mark Notification as read", description = "Returns Notification with read status ")
+    @PatchMapping("{notificationId}")
+    public ResponseEntity<ApiResponse<?>> markNotificationAsRead(@PathVariable("notificationId") Long id){
+        try{
+            logger.info("Attempting to mark as read notification");
+            NotificationInfo notificationInfo=notificationService.saveIsRead(id);
+            logger.info("Successfully saved marked as read ");
+            return new ResponseEntity<>(new ApiResponse<>(notificationInfo,"Notification is marked as read",true),HttpStatus.OK);
+        }catch (ResourceNotFoundException e){
+            logger.warn(e.getMessage());
+            throw e;
+        }
+        catch (Exception e){
+            logger.error("A problem occurred while marking notification as read: " + e.getMessage());
+            return new ResponseEntity<>(new ApiResponse<>(null, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
-//    @GetMapping("/notification")
-////  public List<Notification> getAllNotifications()
-//    public String getAllNotifications(){
-//        return "all notification";
-//    }
+
+
 
 }

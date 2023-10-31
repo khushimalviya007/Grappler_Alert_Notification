@@ -14,9 +14,12 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class NotificationDtoForCreate {
+
     private TicketDto ticket;
+
     @NotNull(message = "Project field is mandatory")
     private ProjectDto project;
+
     @NotNull(message = "Rule field is mandatory")
     private Rule rule;
 }

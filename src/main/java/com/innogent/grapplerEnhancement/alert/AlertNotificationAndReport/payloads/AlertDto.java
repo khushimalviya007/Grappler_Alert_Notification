@@ -7,35 +7,21 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
-@NoArgsConstructor
-@Setter
+
 @Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class AlertDto {
+    private TicketDto ticket;
 
-    @NotNull(message = "type is mandatory field")
-    private AlertType type;
+    @NotNull(message = "Project field is mandatory")
+    private ProjectDto project;
 
-    @NotBlank(message = "description is mandatory field")
-    private String description;
-
-    @NotBlank(message = "channels is mandatory field")
-    private String channels;
-
-    @NotEmpty(message = "users is mandatory field")
-    private List<User> users;
-
-    @NotNull(message = "ticket is mandatory field")
-    private Ticket ticket;
-
-    @NotNull(message = "project is mandatory field")
-    private Project project;
-
-    @NotNull(message = "template is mandatory field")
-    private Template template;
-
-    @NotNull(message = "rule is mandatory field")
+    @NotNull(message = "Rule field is mandatory")
     private Rule rule;
 }

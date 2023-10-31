@@ -31,6 +31,7 @@ public class TicketDto {
     private String creationDate;
 
     private String endDate;
+
     @NotNull(message = "Project field is mandatory")
     private ProjectDto project;
 }
