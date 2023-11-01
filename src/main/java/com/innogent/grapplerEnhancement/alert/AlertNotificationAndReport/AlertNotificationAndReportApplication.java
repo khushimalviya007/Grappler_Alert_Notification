@@ -30,6 +30,7 @@ public class AlertNotificationAndReportApplication {
 		SpringApplication.run(AlertNotificationAndReportApplication.class, args);
 		System.out.println("Grappler enhancement");
 	}
+
 	@Bean
 	public ModelMapper modelMapper()
 	{

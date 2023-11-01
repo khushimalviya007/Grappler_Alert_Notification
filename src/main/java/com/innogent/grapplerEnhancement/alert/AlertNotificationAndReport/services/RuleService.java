@@ -3,10 +3,9 @@ package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.servic
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.customExceptions.ResourceAlreadyExistException;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.customExceptions.ResourceNotFoundException;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Rule;
-import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Sources;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Trigger;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.RuleDto;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries.RuleRepositary;
-import jakarta.persistence.Column;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +24,11 @@ public class RuleService {
     @Autowired
     ModelMapper modelMapper;
 
-    final Logger logger = LoggerFactory.getLogger(RuleService.class);
+     final Logger logger = LoggerFactory.getLogger(RuleService.class);
 
     public List<RuleDto> getAllRules() {
         logger.info("Fetching all rules.");
-        List<Rule> rules = ruleRepositary.findByIsDeletedAndIsEnabled(false, true);
+        List<Rule> rules = ruleRepositary.findByIsDeleted(false);
         if (rules.isEmpty()) {
             throw new ResourceNotFoundException("Rule List", "and size of list is ",0);
         }
@@ -40,7 +39,7 @@ public class RuleService {
 
     public RuleDto getRuleById(Long ruleId) {
         logger.info("Fetching rule by ID: {}", ruleId);
-        Rule rule = this.ruleRepositary.findByIdAndIsDeletedAndIsEnabled(ruleId, false, true);
+        Rule rule = this.ruleRepositary.findByIdAndIsDeleted(ruleId, false);
 
         if (rule == null) {
             throw new ResourceNotFoundException("Rule", "ID", ruleId);
@@ -51,13 +50,15 @@ public class RuleService {
 
     public RuleDto createRule(RuleDto ruleDto) {
         logger.info("Creating a new rule.");
-        List<Rule> ruleExist = ruleRepositary.findBySourcesAndIdentityAndTriggerAndConditionAndIsDeletedAndIsEnabled(ruleDto.getSources(), ruleDto.getIdentity(), ruleDto.getTrigger(), ruleDto.getCondition(), false, true);
+        List<Rule> ruleExist = ruleRepositary.findByTriggerAndEntityAndFieldAndConditionAndIsDeleted(ruleDto.getTrigger(), ruleDto.getEntity(), ruleDto.getField(), ruleDto.getCondition(), false);
 
         for(Rule r:ruleExist)
         {
             if(ruleDto.getScope().equalsIgnoreCase(r.getScope()))
                 throw new ResourceAlreadyExistException("Rule", "id",r.getId());
         }
+
+
         Rule rule = this.modelMapper.map(ruleDto, Rule.class);
         rule.setCreationDate(new Date().toString());
         Rule savedRule = ruleRepositary.save(rule);
@@ -68,7 +69,7 @@ public class RuleService {
 
     public void deleteRule(int ruleId) {
         logger.info("Deleting rule by ID: {}", ruleId);
-        Rule rule = this.ruleRepositary.findByIdAndIsDeletedAndIsEnabled(ruleId, false, true);
+        Rule rule = this.ruleRepositary.findByIdAndIsDeleted(ruleId, false);
         if (rule == null) {
             throw new ResourceNotFoundException("Rule", "ID", ruleId);
         }
@@ -79,21 +80,24 @@ public class RuleService {
 
     public RuleDto updateRule(Long ruleId, RuleDto ruleDto) {
         logger.info("Updating rule with ID: {}", ruleId);
-        Rule nonUpdatedRule = ruleRepositary.findByIdAndIsDeletedAndIsEnabled(ruleId,false,true);
+        Rule nonUpdatedRule = ruleRepositary.findByIdAndIsDeleted(ruleId,false);
         if(nonUpdatedRule==null)
             throw  new ResourceNotFoundException("Rule", "id", ruleId);
 
-        if(ruleDto.getSources()!=null)
-            nonUpdatedRule.setSources(ruleDto.getSources());
+        if(ruleDto.getName()!=null)
+            nonUpdatedRule.setName(ruleDto.getName());
+
+        if(ruleDto.getTrigger()!=null)
+            nonUpdatedRule.setTrigger(ruleDto.getTrigger());
 
         if(ruleDto.getScope()!=null)
             nonUpdatedRule.setScope(ruleDto.getScope());
 
-        if(ruleDto.getIdentity()!=null)
-            nonUpdatedRule.setIdentity(ruleDto.getIdentity());
+        if(ruleDto.getEntity()!=null)
+            nonUpdatedRule.setEntity(ruleDto.getEntity());
 
-        if(ruleDto.getTrigger()!=null)
-            nonUpdatedRule.setTrigger(ruleDto.getTrigger());
+        if(ruleDto.getField()!=null)
+            nonUpdatedRule.setField(ruleDto.getField());
 
         if(ruleDto.getCondition()!=null)
             nonUpdatedRule.setCondition(ruleDto.getCondition());
@@ -107,8 +111,8 @@ public class RuleService {
         if(ruleDto.getSeverity()!=null)
             nonUpdatedRule.setSeverity(ruleDto.getSeverity());
 
-        if(ruleDto.getRecepientDescription()!=null)
-            nonUpdatedRule.setRecepientDescription(ruleDto.getRecepientDescription());
+        if(ruleDto.getRecepient()!=null)
+            nonUpdatedRule.setRecepient(ruleDto.getRecepient());
 
         if(ruleDto.getChannel()!=null)
             nonUpdatedRule.setChannel(ruleDto.getChannel());
@@ -133,8 +137,8 @@ public class RuleService {
         return ruleDto;
     }
 
-    public List<Rule> getRuleByScope(Sources sources,String scope, String identity, String trigger, String condition) {
-        List<Rule> rule = ruleRepositary.findBySourcesAndIdentityAndTriggerAndConditionAndIsDeletedAndIsEnabled(sources, identity, trigger, condition, false, true);
+    public List<Rule> getRuleByScope(Trigger trigger, String scope, String entity, String field, String condition) {
+        List<Rule> rule = ruleRepositary.findByTriggerAndEntityAndFieldAndConditionAndIsDeleted(trigger, entity, field, condition, false);
         for(Rule r:rule)
         {
             if(!scope.equalsIgnoreCase(r.getScope())){
