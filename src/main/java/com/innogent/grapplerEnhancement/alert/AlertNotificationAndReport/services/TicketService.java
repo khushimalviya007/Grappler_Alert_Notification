@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,7 +51,7 @@ public class TicketService {
                     .orElseThrow(() -> new ResourceNotFoundException("User", "id", userDto.getId()));
             users.add(user);
         }
-        ticket.setCreationDate(String.valueOf(new Date()));
+        ticket.setCreationDate(LocalDateTime.now()); // Use LocalDateTime
         ticket.setStage(Stages.TODO);
         ticket.setAssignedBy(assignedBy);
         ticket.setAssignees(users);

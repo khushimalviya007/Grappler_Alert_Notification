@@ -15,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @Entity
-@Name("users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -31,10 +30,10 @@ public class User {
     @Column(nullable = false)
     private String phoneNo;
 
-    @ManyToMany(mappedBy = "listOfUser")
+    @ManyToMany(mappedBy = "userList")
     private List<Notification> notifications;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "userList")
     private List<Alert> alerts;
 
     @ManyToMany(mappedBy = "assignees")

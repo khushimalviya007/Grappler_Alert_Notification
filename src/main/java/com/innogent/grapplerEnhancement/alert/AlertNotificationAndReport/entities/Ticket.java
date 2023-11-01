@@ -3,6 +3,8 @@ package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entiti
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 @Getter
 @Setter
@@ -22,16 +24,17 @@ public class Ticket {
     @Column(nullable = false )
     private Stages stage=Stages.TODO;
 
+    @Column(columnDefinition = "DATETIME")
+    private LocalDateTime creationDate;
+
+    private String endDate;
+
+
     @ManyToMany
     List<User> assignees;
 
     @ManyToOne(optional = false)
     private User assignedBy;
-
-    @Column(nullable = false)
-    private String creationDate;
-
-    private String endDate;
 
     @ManyToOne(optional = false)
     private Project project;

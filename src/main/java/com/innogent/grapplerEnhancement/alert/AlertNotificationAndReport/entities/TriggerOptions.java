@@ -23,5 +23,4 @@ public class TriggerOptions {
 
     @Column(nullable = false)
     private String triggerCondition;
-
 }

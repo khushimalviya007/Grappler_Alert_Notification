@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,21 +18,22 @@ public class Alert {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(nullable = false )
+    @Column(nullable = false)
     private AlertType type;
 
-    @Column(nullable = false )
+    @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false )
+    @Column(nullable = false)
     private String channels;
 
-//    @Column(nullable = false )
-    private String creationDate;
+    @Column(columnDefinition = "DATETIME")
+    private LocalDateTime creationDate; // Update the field type to LocalDateTime
 
     private String response;
-    @ManyToMany(mappedBy = "alerts")
-    private List<User> users;
+
+    @ManyToMany
+    private List<User> userList;
 
     @ManyToOne
     private Ticket ticket;
@@ -46,6 +46,4 @@ public class Alert {
 
     @ManyToOne
     private Rule rule;
-
-
 }

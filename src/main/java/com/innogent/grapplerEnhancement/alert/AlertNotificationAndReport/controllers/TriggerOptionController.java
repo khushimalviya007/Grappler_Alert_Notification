@@ -31,7 +31,7 @@ public class TriggerOptionController {
 
             if (allTriggers == null || allTriggers.isEmpty()) {
                 logger.warn("No trigger options found.");
-                return new ResponseEntity<>(new ApiResponse<>("No data available","No data available", false), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ApiResponse<>(null,"No data available", false), HttpStatus.NOT_FOUND);
 
             }
 

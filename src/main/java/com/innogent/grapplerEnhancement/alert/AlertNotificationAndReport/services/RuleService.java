@@ -90,6 +90,7 @@ public class RuleService {
         if(ruleDto.getTrigger()!=null)
             nonUpdatedRule.setTrigger(ruleDto.getTrigger());
 
+
         if(ruleDto.getScope()!=null)
             nonUpdatedRule.setScope(ruleDto.getScope());
 

@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProjectDto {
     private Long id;
+
     @NotBlank(message = "Name of project  cannot be Blank")
     private String name;
 

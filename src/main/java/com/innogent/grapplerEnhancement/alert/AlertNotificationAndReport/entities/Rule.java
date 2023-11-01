@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Rule")
 public class Rule {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

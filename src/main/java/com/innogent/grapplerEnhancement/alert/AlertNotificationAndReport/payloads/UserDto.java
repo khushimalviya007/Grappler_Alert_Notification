@@ -19,13 +19,14 @@ import java.util.List;
 @Getter
 public class UserDto {
 
-    @Pattern(regexp = "\\d+",message = "must be no only")
+//    @Pattern(regexp = "\\d+",message = "must be no only")
     private Long id;
     @NotBlank(message = "Name is mandatory field")
-    @Size(min=4,message = "Username must be min 4 characters !!")
+//    @Size(min=4,message = "Username must be min 4 characters !!")
     private String name;
+
     @NotBlank(message = "Password is mandatory field")
-    @Size(min=3,max = 10,message = "password must be min 3 chars and less than 10 chars")
+//    @Size(min=3,max = 10,message = "password must be min 3 chars and less than 10 chars")
     private String password;
     @Email
     @NotBlank(message = "email is mandatory field")

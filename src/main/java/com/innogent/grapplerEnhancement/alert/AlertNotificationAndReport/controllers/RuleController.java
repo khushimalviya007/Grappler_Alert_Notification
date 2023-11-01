@@ -1,4 +1,5 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.controllers;
+
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.customExceptions.ResourceAlreadyExistException;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.customExceptions.ResourceNotFoundException;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Rule;
@@ -18,20 +19,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/rules")
 public class RuleController {
+
     private static final Logger logger = LoggerFactory.getLogger(RuleController.class);
+
     @Autowired
     private RuleService ruleService;
-    @Autowired
-    RuleRepositary ruleRepositary;
-        @Operation(summary = "Retrieve List of Rules", description = "Returns the List of Rules")
+
+    @Operation(summary = "Retrieve List of Rules", description = "Returns the List of Rules")
     @GetMapping
-        public ResponseEntity getAllRules() {
+    public ResponseEntity getAllRules() {
         try {
             logger.info("Attempting to retrieve all rules.");
             List<RuleDto> rules = ruleService.getAllRules();
@@ -49,7 +50,8 @@ public class RuleController {
             return new ResponseEntity(new ApiResponse(null,e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-        @Operation(summary = "Get a Rule by ruleId", description = "Return the Rule if it exists")
+
+    @Operation(summary = "Get a Rule by ruleId", description = "Return the Rule if it exists")
     @GetMapping("/{ruleId}")
     public ResponseEntity getSingleRule(@PathVariable("ruleId") Long ruleId) {
         try {
@@ -75,6 +77,7 @@ public class RuleController {
             RuleDto rule = ruleService.createRule(ruleDto);
             logger.info("Successfully created a new rule with ID: " + rule.getId());
             return  new ResponseEntity<>(new ApiResponse(rule,"Successfully created a new rule with ID: " + rule.getId(),true), HttpStatus.CREATED);
+
         } catch (DataIntegrityViolationException e) {
             logger.error("Database error: " + e.getMessage(), e);
             return new ResponseEntity(new ApiResponse(null,e.getMessage(), false), HttpStatus.BAD_REQUEST);
@@ -87,7 +90,7 @@ public class RuleController {
         }
     }
 
-        @Operation(summary = "Soft Delete a rule", description = "Returns soft deleted status")
+    @Operation(summary = "Soft Delete a rule", description = "Returns soft deleted status")
     @DeleteMapping("/{ruleId}")
     public ResponseEntity deleteRule(@PathVariable("ruleId") int ruleId) {
         try {
@@ -104,7 +107,7 @@ public class RuleController {
         }
     }
 
-        @Operation(summary = "Update a rule", description = "Returns the updated rule")
+    @Operation(summary = "Update a rule", description = "Returns the updated rule")
     @PatchMapping("/{ruleId}")
     public ResponseEntity updateRule(@PathVariable("ruleId") Long ruleId, @RequestBody RuleDto ruleDto) {
         try {
@@ -121,18 +124,6 @@ public class RuleController {
             logger.error("An error occurred while updating the rule: " + e.getMessage());
             return new ResponseEntity(new ApiResponse(null,e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-    @PutMapping("/{ruleId}/disable")
-    public ResponseEntity<Rule> updateRule(@PathVariable("ruleId") Long ruleId) {
-        Optional<Rule> rule = ruleRepositary.findById(ruleId);
-
-        if (rule.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Rule rulee = rule.get();
-        rulee.setIsDeleted(true);
-        ruleRepositary.save(rulee);
-        return ResponseEntity.ok(rulee);
     }
 
     @Operation(summary = "Get Rule by scope", description = "Returns rule by scope")
