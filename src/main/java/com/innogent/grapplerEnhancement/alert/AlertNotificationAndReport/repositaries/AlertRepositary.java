@@ -4,6 +4,9 @@ import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entitie
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface AlertRepositary extends JpaRepository<Alert,Long> {
+    List<Alert> findByTicketId(Long ticketId);
 }

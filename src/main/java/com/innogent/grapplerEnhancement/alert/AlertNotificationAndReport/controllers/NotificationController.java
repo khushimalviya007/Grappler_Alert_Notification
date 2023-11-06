@@ -24,9 +24,6 @@ import java.util.List;
 public class NotificationController {
 
     Logger logger = LoggerFactory.getLogger(AlertController.class);
-
-
-
     @Autowired
     private NotificationService notificationService;
 
@@ -52,7 +49,7 @@ public class NotificationController {
 
 
     @Operation(summary = "Mark Notification as read", description = "Returns Notification with read status ")
-    @PatchMapping("{notificationId}")
+    @PatchMapping("/{notificationId}")
     public ResponseEntity<ApiResponse<?>> markNotificationAsRead(@PathVariable("notificationId") Long id){
         try{
             logger.info("Attempting to mark as read notification");
@@ -70,7 +67,21 @@ public class NotificationController {
 
     }
 
-
-
-
+    @Operation(summary = "All list of notification by userId", description = "Returns the list of notification")
+    @GetMapping("/{userId}")
+    public ResponseEntity<ApiResponse<?>> userNotifiation(@PathVariable("userId") Long userId){
+        try{
+            logger.info("Attempting to get user notifications");
+            List<NotificationInfo> notificationList=notificationService.userNotification(userId);
+            logger.info("Successfully got notification list ");
+            return new ResponseEntity<>(new ApiResponse<>(notificationList,"found all notification",true),HttpStatus.OK);
+        }catch (ResourceNotFoundException e){
+            logger.warn(e.getMessage());
+            throw e;
+        }
+        catch (Exception e){
+            logger.error("A problem occurred while getting lis of notification : " + e.getMessage());
+            return new ResponseEntity<>(new ApiResponse<>(null, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

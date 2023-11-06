@@ -1,39 +1,37 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.services;
 
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities.Email;
+import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EmailServiceImpl implements EmailService{
         @Autowired
         private JavaMailSender javaMailSender;
-
         @Value("${spring.mail.username}") private String sender;
-
-        // Method 1
-        // To send a simple email
         public String sendSimpleMail(Email email)
         {
-
-            // Try block to check for exceptions
             try {
-
-                // Creating a simple mail message
-                SimpleMailMessage mailMessage
-                        = new SimpleMailMessage();
-
-                // Setting up necessary details
+                SimpleMailMessage mailMessage  = new SimpleMailMessage();
                 mailMessage.setFrom(sender);
-                mailMessage.setTo(email.getRecipient());
-                mailMessage.setText(email.getMsgBody());
-                mailMessage.setSubject(email.getSubject());
+//                String[] recipients = email.getRecipient().split(",");
+//                mailMessage.setTo(recipients);
+//                mailMessage.setText(email.getMsgBody());
+//                mailMessage.setSubject(email.getSubject());
+                List<String> to=email.getRecipient();
+                for (String recipient : to) {
+                    mailMessage.setTo(recipient);
+                    mailMessage.setText(email.getMsgBody());
+                    mailMessage.setSubject(email.getSubject());
+                    javaMailSender.send(mailMessage);
+                }
 
-                // Sending the mail
-                javaMailSender.send(mailMessage);
                 return "Mail Sent Successfully...";
             }
             catch (Exception e) {

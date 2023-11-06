@@ -38,6 +38,4 @@ public class Ticket {
 
     @ManyToOne(optional = false)
     private Project project;
-
-
 }

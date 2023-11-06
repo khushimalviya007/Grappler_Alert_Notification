@@ -24,7 +24,7 @@ public class RuleService {
     @Autowired
     ModelMapper modelMapper;
 
-     final Logger logger = LoggerFactory.getLogger(RuleService.class);
+    final Logger logger = LoggerFactory.getLogger(RuleService.class);
 
     public List<RuleDto> getAllRules() {
         logger.info("Fetching all rules.");
@@ -50,7 +50,7 @@ public class RuleService {
 
     public RuleDto createRule(RuleDto ruleDto) {
         logger.info("Creating a new rule.");
-        List<Rule> ruleExist = ruleRepositary.findByTriggerAndEntityAndFieldAndConditionAndIsDeleted(ruleDto.getTrigger(), ruleDto.getEntity(), ruleDto.getField(), ruleDto.getCondition(), false);
+        List<Rule> ruleExist = ruleRepositary.findByTriggerAndEntityAndFieldAndConditionAndActionAndIsDeleted(ruleDto.getTrigger(), ruleDto.getEntity(), ruleDto.getField(), ruleDto.getCondition(),ruleDto.getAction(), false);
 
         for(Rule r:ruleExist)
         {
@@ -138,8 +138,8 @@ public class RuleService {
         return ruleDto;
     }
 
-    public List<Rule> getRuleByScope(Trigger trigger, String scope, String entity, String field, String condition) {
-        List<Rule> rule = ruleRepositary.findByTriggerAndEntityAndFieldAndConditionAndIsDeleted(trigger, entity, field, condition, false);
+    public List<Rule> getRuleByScope(Trigger trigger, String scope, String entity, String field, String condition,String action) {
+        List<Rule> rule = ruleRepositary.findByTriggerAndEntityAndFieldAndConditionAndActionAndIsDeleted(trigger, entity, field, condition, action,false);
         for(Rule r:rule)
         {
             if(!scope.equalsIgnoreCase(r.getScope())){
@@ -150,4 +150,18 @@ public class RuleService {
         }
         return rule;
     }
+
+    public List<Rule> getRule(Trigger trigger, String scope, String entity, String field, String condition) {
+        List<Rule> rule = ruleRepositary.findByTriggerAndEntityAndFieldAndConditionAndIsDeletedAndIsEnabled(trigger, entity, field, condition,false,true);
+        for(Rule r:rule)
+        {
+            if(!scope.equalsIgnoreCase(r.getScope())){
+                if(!(r.getScope().equalsIgnoreCase("global"))){
+                    rule.remove(r);
+                }
+            }
+        }
+        return rule;
+    }
+
 }

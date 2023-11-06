@@ -5,6 +5,8 @@ import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entitie
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.payloads.*;
 import com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.repositaries.*;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,9 @@ public class NotificationService {
     UserRepositary userRepositary;
     @Autowired
     ModelMapper modelMapper;
+
+
+    Logger logger= LoggerFactory.getLogger(NotificationService.class);
 
 
     /**
@@ -69,30 +74,54 @@ public class NotificationService {
         String[] users=recepient.split(",");
         List<User> userList= new ArrayList<>();
         for(String s:users){
-            if(s.equalsIgnoreCase("ASSIGNED_TO")){
-                if(rule.getEntity().equalsIgnoreCase("PROJECT")){
-                    project.getUsers().forEach((user)->userList.add(user));
-                }else if(ticketFinal!=null){
-                    ticketFinal.getAssignees().forEach((user)->userList.add(user));
+            if(s.equalsIgnoreCase("Assigne_To")){
+                if(ticketFinal!=null){
+                    ticketFinal.getAssignees().forEach((user)->{
+                        if (!userList.contains(user))
+                            userList.add(user);
+                    });
+                } else if(rule.getEntity().equalsIgnoreCase("PROJECT")){
+                    project.getUsers().forEach((user)-> {
+                                if (!userList.contains(user))
+                                    userList.add(user);
+                            }
+                    );
                 }
-            }else if(s.equalsIgnoreCase("ASSIGNED_BY")){
-                if(rule.getEntity().equalsIgnoreCase("PROJECT")){
-                }else if(ticketFinal!=null){
-                    userList.add(ticketFinal.getAssignedBy()) ;
+            }else if(s.equalsIgnoreCase("Assigned_By")){
+                if(ticketFinal!=null){
+                    if (!userList.contains(ticketFinal.getAssignedBy()))
+                        userList.add(ticketFinal.getAssignedBy());
                 }
-            }else if(s.equalsIgnoreCase("BOTH")){
-                if(rule.getEntity().equalsIgnoreCase("PROJECT")){
-                    project.getUsers().forEach((user)->userList.add(user));
-                }else if(ticketFinal!=null){
-                    ticketFinal.getAssignees().forEach((user)->userList.add(user));
-                    userList.add(ticketFinal.getAssignedBy()) ;
+                else if(rule.getEntity().equalsIgnoreCase("PROJECT")){
                 }
-            }else{
-                    User byId = userRepositary.findById(Long.valueOf(s)).orElseThrow(() -> new ResourceNotFoundException("User", "id", Long.valueOf(s)));
-                    userList.add(byId);
+            }else if(s.equalsIgnoreCase("Both")){
+                if(ticketFinal!=null){
+                    ticketFinal.getAssignees().forEach((user)->{
+                        if (!userList.contains(user))
+                            userList.add(user);
+                    });
+                    if (!userList.contains(ticketFinal.getAssignedBy()))
+                        userList.add(ticketFinal.getAssignedBy());
+                }
+                else  if(rule.getEntity().equalsIgnoreCase("PROJECT")){
+                    project.getUsers().forEach((user)->{
+                        if (!userList.contains(user))
+                            userList.add(user);
+                    });
+                }
+            }
+            else{
+                User user = userRepositary.findById(Long.valueOf(s)).orElseThrow(() -> new ResourceNotFoundException("User", "id", Long.valueOf(s)));
+                if (!userList.contains(user))
+                    userList.add(user);
             }
         }
+//        if(!userList.contains(userRepositary.findById((long)1).get()))
+//            userList.add(userRepositary.findById((long)1).get());
         note.setUserList(userList);
+        logger.info("userList is "+userList.isEmpty());
+//        logger.info("userList first data is "+userList.get(0));
+
         Notification save = notificationRepositary.save(note);
         return this.modelMapper.map(save, NotificationInfo.class);
     }
@@ -106,4 +135,12 @@ public class NotificationService {
     }
 
 
+    public List<NotificationInfo> userNotification(Long userId) {
+//        User user=userRepositary.findById(userId)
+//                .orElseThrow(() -> new ResourceNotFoundException("User","id",userId));
+
+        List<Notification> notificationList=notificationRepositary.findAllByUserList_IdOrderByCreationDateDesc(userId);
+        List<NotificationInfo> notificationInfoList= notificationList.stream().map(notification -> modelMapper.map(notification,NotificationInfo.class)).toList();
+        return notificationInfoList;
+    }
 }
