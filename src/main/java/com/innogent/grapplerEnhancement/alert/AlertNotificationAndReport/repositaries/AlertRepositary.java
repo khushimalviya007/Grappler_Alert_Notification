@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface AlertRepositary extends JpaRepository<Alert,Long> {
     List<Alert> findByTicketId(Long ticketId);
+
+    List<Alert> findByUserList_Id(Long userId);
 }

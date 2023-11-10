@@ -46,26 +46,41 @@ public class NotificationController {
         }
     }
 
-
-
-    @Operation(summary = "Mark Notification as read", description = "Returns Notification with read status ")
-    @PatchMapping("/{notificationId}")
-    public ResponseEntity<ApiResponse<?>> markNotificationAsRead(@PathVariable("notificationId") Long id){
-        try{
-            logger.info("Attempting to mark as read notification");
-            NotificationInfo notificationInfo=notificationService.saveIsRead(id);
-            logger.info("Successfully saved marked as read ");
-            return new ResponseEntity<>(new ApiResponse<>(notificationInfo,"Notification is marked as read",true),HttpStatus.OK);
-        }catch (ResourceNotFoundException e){
-            logger.warn(e.getMessage());
-            throw e;
-        }
-        catch (Exception e){
-            logger.error("A problem occurred while marking notification as read: " + e.getMessage());
-            return new ResponseEntity<>(new ApiResponse<>(null, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-    }
+//    @Operation(summary = "Mark Notification as read", description = "Returns Notification with read status ")
+//    @PatchMapping("/{notificationId}")
+//    public ResponseEntity<ApiResponse<?>> markNotificationAsRead(@PathVariable("notificationId") Long id){
+//        try{
+//            logger.info("Attempting to mark as read notification");
+//            NotificationInfo notificationInfo=notificationService.saveIsRead(id);
+//            logger.info("Successfully saved marked as read ");
+//            return new ResponseEntity<>(new ApiResponse<>(notificationInfo,"Notification is marked as read",true),HttpStatus.OK);
+//        }catch (ResourceNotFoundException e){
+//            logger.warn(e.getMessage());
+//            throw e;
+//        }
+//        catch (Exception e){
+//            logger.error("A problem occurred while marking notification as read: " + e.getMessage());
+//            return new ResponseEntity<>(new ApiResponse<>(null, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//
+//    }
+//    @Operation(summary = "Mark Notification as read", description = "Returns Notification with read status ")
+//    @PatchMapping("/read-all")
+//    public ResponseEntity<ApiResponse<?>> markNotificationAsRead(){
+//        try{
+//            logger.info("Attempting to mark as read notification");
+//            NotificationInfo notificationInfo=notificationService.saveIsRead();
+//            logger.info("Successfully saved marked as read ");
+//            return new ResponseEntity<>(new ApiResponse<>(notificationInfo,"Notification is marked as read",true),HttpStatus.OK);
+//        }catch (ResourceNotFoundException e){
+//            logger.warn(e.getMessage());
+//            throw e;
+//        }
+//        catch (Exception e){
+//            logger.error("A problem occurred while marking notification as read: " + e.getMessage());
+//            return new ResponseEntity<>(new ApiResponse<>(null, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     @Operation(summary = "All list of notification by userId", description = "Returns the list of notification")
     @GetMapping("/{userId}")

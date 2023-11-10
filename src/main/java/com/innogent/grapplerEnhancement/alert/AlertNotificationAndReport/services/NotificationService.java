@@ -42,6 +42,7 @@ public class NotificationService {
      * @return Notification
      * */
     public NotificationInfo createNotification(NotificationDtoForCreate notification) {
+//        System.out.println(notification.getProject().getId());
         Rule rule = ruleRepositary.findById((long)notification.getRule().getId()).orElseThrow(()->new ResourceNotFoundException("Rule","id",notification.getRule().getId()));
         Project project = projectRepositary.findById(notification.getProject().getId()).orElseThrow(()->new ResourceNotFoundException("Project","id",notification.getProject().getId()));;
         Notification note = this.modelMapper.map(notification, Notification.class);
@@ -111,6 +112,7 @@ public class NotificationService {
                 }
             }
             else{
+                System.out.println("inside notification service" + s);
                 User user = userRepositary.findById(Long.valueOf(s)).orElseThrow(() -> new ResourceNotFoundException("User", "id", Long.valueOf(s)));
                 if (!userList.contains(user))
                     userList.add(user);
@@ -126,7 +128,16 @@ public class NotificationService {
         return this.modelMapper.map(save, NotificationInfo.class);
     }
 
+//    public NotificationInfo saveIsRead(Long notificationId) {
+//        Notification notification = notificationRepositary.findById(notificationId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Notification", "id", notificationId));
+//        notification.setRead(true);
+//        Notification save=notificationRepositary.save(notification);
+//        return modelMapper.map(save, NotificationInfo.class);
+//    }
+
     public NotificationInfo saveIsRead(Long notificationId) {
+
         Notification notification = notificationRepositary.findById(notificationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Notification", "id", notificationId));
         notification.setRead(true);

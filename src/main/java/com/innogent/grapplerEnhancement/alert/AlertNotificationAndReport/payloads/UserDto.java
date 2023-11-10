@@ -22,7 +22,7 @@ public class UserDto {
 //    @Pattern(regexp = "\\d+",message = "must be no only")
     private Long id;
     @NotBlank(message = "Name is mandatory field")
-//    @Size(min=4,message = "Username must be min 4 characters !!")
+//    @Size(min=4,message = "Username must  be min 4 characters !!")
     private String name;
 
     @NotBlank(message = "Password is mandatory field")

@@ -41,6 +41,7 @@ public class AlertNotiService {
 
                 if (s.equalsIgnoreCase("In_app")) {
                     logger.info("try to add notificaton");
+                    System.out.println(projectDto.getId());
                     NotificationDtoForCreate notiDto = new NotificationDtoForCreate(ticketDto, projectDto, rule);
                     notificationService.createNotification(notiDto);
                     logger.info("created noti");
@@ -63,7 +64,7 @@ public class AlertNotiService {
                             UserDto user = ticketDto.getAssignedBy();
                             recepients.add(user.getEmail());
                         } else {
-                            Long i = Long.parseLong(string);
+                            Long i = Long.valueOf(string);
                             UserDto userDto = userService.getUserById(i);
                             recepients.add(userDto.getEmail());
                         }
@@ -84,7 +85,6 @@ public class AlertNotiService {
             String[] channel = rule.getChannel().split(",");
             for (String s : channel) {
                 if (s.equalsIgnoreCase("In_app")) {
-
                     AlertDto alertDto = new AlertDto(ticketDto, projectDto, rule);
                     alertSevice.createAlert(alertDto);
                 }
@@ -94,11 +94,11 @@ public class AlertNotiService {
                     List<String> recepients = new ArrayList<>();
                     String[] recepient = rule.getRecepient().split(",");
                     for (String string : recepient) {
-                        if (string.equalsIgnoreCase("Assigne To")) {
+                        if (string.equalsIgnoreCase("Assigne_To")) {
                             for (UserDto s1 : ticketDto.getAssignees()) {
                                 recepients.add(s1.getEmail());
                             }
-                        } else if (string.equalsIgnoreCase("Assigned By")) {
+                        } else if (string.equalsIgnoreCase("Assigned_By")) {
                             recepients.add(String.valueOf(ticketDto.getAssignedBy()));
                         } else if (string.equalsIgnoreCase("Both")) {
                             for (UserDto s1 : ticketDto.getAssignees()) {

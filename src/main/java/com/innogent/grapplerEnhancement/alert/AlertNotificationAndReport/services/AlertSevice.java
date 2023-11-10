@@ -81,7 +81,7 @@ public class AlertSevice {
         String[] users = recepient.split(",");
         List<User> userList = new ArrayList<>();
         for (String s : users) {
-            if (s.equalsIgnoreCase("ASSIGNED_TO")) {
+            if (s.equalsIgnoreCase("ASSIGNE_TO")) {
                 if (ticketFinal != null) {
                     ticketFinal.getAssignees().forEach((user) -> {
                         if (!userList.contains(user))
@@ -134,6 +134,16 @@ public class AlertSevice {
         return modelMapper.map(alert, AlertDtoInfo.class);
     }
 
+    public List<AlertDtoInfo> getUserAlerts(Long userId) {
+        List<Alert> alertList = alertRepositary.findByUserList_Id(userId);
+        List<AlertDtoInfo> alertDtoInfos = new ArrayList<>();
+
+        alertList.stream().forEach(alert -> {
+            alertDtoInfos.add(modelMapper.map(alert, AlertDtoInfo.class));
+        });
+
+        return alertDtoInfos;
+    }
 
 //    public List<Alert> getUserAlert(Long userId) {
 //        return alertRepositary.findAllByUserID(userId);

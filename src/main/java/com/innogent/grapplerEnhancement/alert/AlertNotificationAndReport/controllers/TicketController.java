@@ -47,8 +47,8 @@ public class TicketController {
     @DeleteMapping("/{ticketId}")
     public ResponseEntity deleteTicket(@PathVariable("ticketId") Long ticketId){
         try {
-            ticketService.deleteTicket(ticketId);
             logger.info("Deleted ticket with ID: " + ticketId);
+            ticketService.deleteTicket(ticketId);
             return new ResponseEntity<>(new ApiResponse<>("Ticket is deleted of ticketId " + ticketId,"Ticket is deleted of ticketId " + ticketId, true), HttpStatus.OK);
 
         } catch (ResourceNotFoundException e) {

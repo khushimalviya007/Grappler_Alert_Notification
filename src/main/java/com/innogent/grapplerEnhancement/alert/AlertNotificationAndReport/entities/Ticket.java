@@ -30,7 +30,7 @@ public class Ticket {
     private String endDate;
 
 
-    @ManyToMany
+    @ManyToMany(cascade =CascadeType.ALL , fetch = FetchType.EAGER)
     List<User> assignees;
 
     @ManyToOne(optional = false)

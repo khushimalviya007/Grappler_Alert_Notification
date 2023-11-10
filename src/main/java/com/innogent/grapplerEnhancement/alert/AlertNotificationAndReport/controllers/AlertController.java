@@ -65,4 +65,21 @@ public class AlertController {
             return new ResponseEntity<>(new ApiResponse<>(null, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getAlertsByUserId(@PathVariable("userId") Long userId) {
+        try{
+            logger.info("Attempting to get user alerts");
+            List<AlertDtoInfo> alertList = alertSevice.getUserAlerts(userId);
+            logger.info("Successfully got alert list ");
+            return new ResponseEntity<>(new ApiResponse<>(alertList,"found all alerts",true),HttpStatus.OK);
+        }catch (ResourceNotFoundException e){
+            logger.warn(e.getMessage());
+            throw e;
+        }
+        catch (Exception e){
+            logger.error("A problem occurred while getting lis of notification : " + e.getMessage());
+            return new ResponseEntity<>(new ApiResponse<>(null, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
