@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,6 +31,8 @@ public class NotificationService {
     UserRepositary userRepositary;
     @Autowired
     ModelMapper modelMapper;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
 
     Logger logger= LoggerFactory.getLogger(NotificationService.class);
@@ -42,7 +45,6 @@ public class NotificationService {
      * @return Notification
      * */
     public NotificationInfo createNotification(NotificationDtoForCreate notification) {
-//        System.out.println(notification.getProject().getId());
         Rule rule = ruleRepositary.findById((long)notification.getRule().getId()).orElseThrow(()->new ResourceNotFoundException("Rule","id",notification.getRule().getId()));
         Project project = projectRepositary.findById(notification.getProject().getId()).orElseThrow(()->new ResourceNotFoundException("Project","id",notification.getProject().getId()));;
         Notification note = this.modelMapper.map(notification, Notification.class);
@@ -118,13 +120,13 @@ public class NotificationService {
                     userList.add(user);
             }
         }
-//        if(!userList.contains(userRepositary.findById((long)1).get()))
-//            userList.add(userRepositary.findById((long)1).get());
+
         note.setUserList(userList);
         logger.info("userList is "+userList.isEmpty());
-//        logger.info("userList first data is "+userList.get(0));
 
         Notification save = notificationRepositary.save(note);
+        messagingTemplate.convertAndSend("/topic/notifications", note);
+
         return this.modelMapper.map(save, NotificationInfo.class);
     }
 

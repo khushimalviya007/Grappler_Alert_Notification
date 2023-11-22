@@ -32,7 +32,7 @@ public class TicketService {
     ModelMapper modelMapper;
     @Autowired
     NotificationService notificationService;
-    private  static Logger logger= LoggerFactory.getLogger(TicketService.class);
+    private static Logger logger = LoggerFactory.getLogger(TicketService.class);
 
     @Autowired
     AlertSevice alertSevice;
@@ -55,14 +55,15 @@ public class TicketService {
     private void runAlertNotiInSeparateThread(TicketDto ticketDto, ProjectDto projectDto, Rule rule) {
         new Thread(() -> {
             try {
-                alertNotiService.createAlertNoti(ticketDto,projectDto,rule);
+                alertNotiService.createAlertNoti(ticketDto, projectDto, rule);
                 Thread.sleep(500);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
     }
-    public TicketDto createTicket(TicketDto ticketDto)  {
+
+    public TicketDto createTicket(TicketDto ticketDto) {
 
         User assignedBy = userRepositary.findById(ticketDto.getAssignedBy().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", ticketDto.getAssignedBy().getId()));
@@ -70,7 +71,7 @@ public class TicketService {
                 .orElseThrow(() -> new ResourceNotFoundException("Project", "id", ticketDto.getProject().getId()));
 
         Ticket ticket = this.modelMapper.map(ticketDto, Ticket.class);
-        List<User> users= new ArrayList<>();
+        List<User> users = new ArrayList<>();
         for (UserDto userDto : ticketDto.getAssignees()) {
             User user = userRepositary.findById(userDto.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("User", "id", userDto.getId()));
@@ -83,56 +84,58 @@ public class TicketService {
         ticket.setProject(project);
         Ticket savedTicket = ticketRepositary.save(ticket);
 
-        List<Rule> ruleList=ruleService.getRule(Trigger.EVENT,"Global","Project","Ticket","add");
+        List<Rule> ruleList = ruleService.getRule(Trigger.EVENT, "Global", "Project", "Ticket", "add");
 
-            for (Rule rule : ruleList) {
-                runAlertNotiInSeparateThread(modelMapper.map(savedTicket, TicketDto.class),
-                        modelMapper.map(savedTicket.getProject(), ProjectDto.class), rule);
-            }
-            return this.modelMapper.map(savedTicket, TicketDto.class);
+        for (Rule rule : ruleList) {
+            runAlertNotiInSeparateThread(modelMapper.map(savedTicket, TicketDto.class),
+                    modelMapper.map(savedTicket.getProject(), ProjectDto.class), rule);
         }
-
+        return this.modelMapper.map(savedTicket, TicketDto.class);
+    }
 
 
     public void deleteTicket(Long ticketId) {
         Ticket ticket = ticketRepositary.findById(ticketId).orElseThrow(() -> new ResourceNotFoundException("Ticket", "id", ticketId));
         logger.info("attemption to delete ticket");
-        // Get a list of notifications referencing this ticket
-        // Now you can safely delete the ticket
-        ticketRepositary.deleteById(ticketId);
         List<Notification> notifications = notificationRepositary.findByTicketId(ticketId);
-        List<Rule> ruleList=ruleService.getRule(Trigger.EVENT,"Global","Project","Ticket","Delete");
-        logger.info("is rule list is empty "+ruleList.isEmpty());
-        for(Rule rule:ruleList) {
-            alertNotiService.createAlertNoti(modelMapper.map(ticket,TicketDto.class), modelMapper.map(ticket.getProject(),ProjectDto.class),rule);
+        List<Rule> ruleList = ruleService.getRule(Trigger.EVENT, "Global", "Project", "Ticket", "Delete");
+        logger.info("is rule list is empty " + ruleList.isEmpty());
+        for (Rule rule : ruleList) {
+            alertNotiService.createAlertNoti(modelMapper.map(ticket, TicketDto.class), modelMapper.map(ticket.getProject(), ProjectDto.class), rule);
         }
+        // Creating an empty list and assigning to the ticket
+        List<User> emptyList = new ArrayList<>();
+        ticket.setAssignees(emptyList);
+        // Saving this ticket - Will delete the foreign keys from ticket_assignees table
+        ticketRepositary.save(ticket);
+
         // Remove references to the ticket in notifications
         for (Notification notification : notifications) {
             notification.setTicket(null); // Set the reference to null
-            notificationRepositary.save(notification);
+            notificationRepositary.saveAndFlush(notification); // Use saveAndFlush to detach the entity
         }
+
         // Get a list of alerts referencing this ticket
         List<Alert> alerts = alertRepositary.findByTicketId(ticketId);
         // Remove references to the ticket in alerts
         for (Alert alert : alerts) {
             alert.setTicket(null); // Set the reference to null
-            alertRepositary.save(alert);
+            alertRepositary.saveAndFlush(alert); // Use saveAndFlush to detach the entity
         }
 
-
+        ticketRepositary.deleteById(ticketId);
     }
 
     public TicketDto updateTicket(Long ticketId, TicketDto ticketDto) {
         Ticket nonUpdatedTicket = ticketRepositary.findById(ticketId).orElseThrow(() -> new ResourceNotFoundException("Ticket", "id", ticketId));
         if (ticketDto.getName() != null) {
             nonUpdatedTicket.setName(ticketDto.getName());
-            List<Rule> ruleList=ruleService.getRule(Trigger.EVENT,"Global","Ticket","Name","Update");
-            for(Rule rule:ruleList) {
-                alertNotiService.createAlertNoti(modelMapper.map(nonUpdatedTicket,TicketDto.class), modelMapper.map(nonUpdatedTicket.getProject(),ProjectDto.class),rule);
+            List<Rule> ruleList = ruleService.getRule(Trigger.EVENT, "Global", "Ticket", "Name", "Update");
+            for (Rule rule : ruleList) {
+                alertNotiService.createAlertNoti(modelMapper.map(nonUpdatedTicket, TicketDto.class), modelMapper.map(nonUpdatedTicket.getProject(), ProjectDto.class), rule);
             }
         }
-
-        if(ticketDto.getStage() != null) {
+        if (ticketDto.getStage() != null) {
             nonUpdatedTicket.setStage(ticketDto.getStage());
             List<Rule> ruleList = ruleService.getRule(Trigger.EVENT, "Global", "Ticket", "Stage", "Update");
             for (Rule rule : ruleList) {
@@ -140,10 +143,10 @@ public class TicketService {
             }
         }
 
-        if(ticketDto.getAssignees() != null ) {
-            ticketDto.getAssignees().stream().forEach((userDto)->{
+        if (ticketDto.getAssignees() != null) {
+            ticketDto.getAssignees().stream().forEach((userDto) -> {
                 User user = userRepositary.findById(userDto.getId()).orElseThrow(() -> new ResourceNotFoundException("User", "id", userDto.getId()));
-                if(!nonUpdatedTicket.getAssignees().contains(user)){
+                if (!nonUpdatedTicket.getAssignees().contains(user)) {
                     nonUpdatedTicket.getAssignees().add(user);
                     List<Rule> ruleList = ruleService.getRule(Trigger.EVENT, "Global", "Ticket", "Assigness", "Update");
                     for (Rule rule : ruleList) {
@@ -153,7 +156,7 @@ public class TicketService {
             });
         }
 
-        if(ticketDto.getEndDate() != null) {
+        if (ticketDto.getEndDate() != null) {
             nonUpdatedTicket.setEndDate(ticketDto.getEndDate());
             List<Rule> ruleList = ruleService.getRule(Trigger.EVENT, "Global", "Ticket", "End Date", "Update");
             for (Rule rule : ruleList) {
@@ -163,17 +166,14 @@ public class TicketService {
         Ticket savedTicket = ticketRepositary.save(nonUpdatedTicket);
 
         return this.modelMapper.map(savedTicket, TicketDto.class);
-
     }
 
     public TicketDto getTicketByTicketId(Long ticketId) {
         Ticket ticket = ticketRepositary.findById(ticketId).orElseThrow(() -> new ResourceNotFoundException("Ticket", "id", ticketId));
-        return this.modelMapper.map(ticket,TicketDto.class);
+        return this.modelMapper.map(ticket, TicketDto.class);
     }
-
-
     public List<TicketDto> getAllTicket() {
         List<Ticket> all = ticketRepositary.findAll();
-        return all.stream().map((ticket)->this.modelMapper.map(ticket,TicketDto.class)).collect(Collectors.toList());
+        return all.stream().map((ticket) -> this.modelMapper.map(ticket, TicketDto.class)).collect(Collectors.toList());
     }
 }

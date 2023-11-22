@@ -41,7 +41,7 @@ public class AlertNotiService {
 
                 if (s.equalsIgnoreCase("In_app")) {
                     logger.info("try to add notificaton");
-                    System.out.println(projectDto.getId());
+//                    System.out.println(projectDto.getId());
                     NotificationDtoForCreate notiDto = new NotificationDtoForCreate(ticketDto, projectDto, rule);
                     notificationService.createNotification(notiDto);
                     logger.info("created noti");

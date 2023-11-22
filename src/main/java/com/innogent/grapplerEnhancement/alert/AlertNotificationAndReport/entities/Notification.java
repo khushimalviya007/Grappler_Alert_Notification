@@ -1,5 +1,6 @@
 package com.innogent.grapplerEnhancement.alert.AlertNotificationAndReport.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,6 +35,7 @@ public class Notification {
     @Column(nullable = false ,columnDefinition = "boolean default false")
     private boolean isRead;
 
+    @JsonIgnore
     @ManyToMany
     private List<User> userList;
 
@@ -45,7 +47,6 @@ public class Notification {
 
     @ManyToOne
     private Project project;
-
 
     @ManyToOne
     private Rule rule;
